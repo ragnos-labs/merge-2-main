@@ -1,0 +1,49 @@
+# Codex Multi-Agent Configuration Template
+# Copy and customize for your project. All fields have documented defaults.
+
+[codex]
+
+# The model to use for agent tasks.
+# Use the model's canonical identifier as defined by your provider.
+# Example: "o4-mini", "o3", "gpt-4.1"
+model = "o4-mini"
+
+# Sandbox mode controls whether agents can execute shell commands and write files.
+# Options:
+#   "strict"    -- no network, no shell, read-only filesystem (safest for untrusted code)
+#   "workspace" -- shell + file writes allowed within the working directory only
+#   "off"       -- no restrictions (use only for trusted, reviewed codebases)
+sandbox_mode = "workspace"
+
+# Maximum number of concurrent agents spawned by the orchestrator.
+# Keep below 8 for most projects to avoid context fragmentation.
+# Increase only for well-decomposed, file-isolated workstreams.
+agent_count_limit = 4
+
+# Default reasoning effort for all agents unless overridden per-agent.
+# Options: "low" | "medium" | "high" | "max"
+# "low"    -- fast, minimal chain-of-thought; good for mechanical tasks
+# "medium" -- balanced; suitable for most feature work
+# "high"   -- slower, deeper reasoning; use for design and cross-system tasks
+# "max"    -- maximum effort; reserve for architecture and security analysis
+reasoning_effort_default = "medium"
+
+# Timeout in seconds before an agent task is considered stalled and killed.
+agent_timeout_seconds = 300
+
+# If true, agents write intermediate reasoning traces to the log directory.
+# Useful for debugging but increases verbosity.
+trace_reasoning = false
+
+# Path to the directory where agent outputs and meta-logs are written.
+# Relative to the project root.
+output_dir = "tmp/codex-run"
+
+[roles]
+
+# Path to per-role agent config files.
+# Each file overrides the defaults above for agents assigned that role.
+lead    = "docs/templates/codex-agents/lead.toml"
+worker  = "docs/templates/codex-agents/worker.toml"
+explorer = "docs/templates/codex-agents/explorer.toml"
+verifier = "docs/templates/codex-agents/verifier.toml"
