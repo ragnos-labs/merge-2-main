@@ -85,15 +85,15 @@ Need git isolation across workstreams?
 Relative cost per session. Actual spend depends on model selection and task complexity.
 
 ```
-+----------------+--------+-------------------+---------------+
-| Pattern        | Agents | Relative Cost     | API Call Risk |
-+----------------+--------+-------------------+---------------+
-| Patchwork      | 1      | Lowest (baseline) | Low           |
-| Worker Swarm   | 4-12   | Low to medium     | Medium        |
-| Research Swarm | 4-16   | Medium            | Low           |
-| Hive Mind 2T   | 3-8    | Medium to high    | High          |
-| Hive Mind 3T   | 15-30+ | High              | Medium        |
-+----------------+--------+-------------------+---------------+
++----------------+--------+--------------+-------------------+---------------+
+| Pattern        | Agents | Multiplier   | Relative Cost     | API Call Risk |
++----------------+--------+--------------+-------------------+---------------+
+| Patchwork      | 1      | 1x baseline  | Lowest            | Low           |
+| Worker Swarm   | 4-12   | 2-4x         | Low to medium     | Medium        |
+| Research Swarm | 4-16   | 3-6x         | Medium            | Low           |
+| Hive Mind 2T   | 3-8    | 4-8x         | Medium to high    | High          |
+| Hive Mind 3T   | 15-30+ | 6-12x        | High              | Medium        |
++----------------+--------+--------------+-------------------+---------------+
 ```
 
 API call risk refers to your LLM provider's rate limit exposure. In any multi-agent setup, consolidate provider API calls to the orchestrator or lead only. Agents that need external data should receive it in their task prompt rather than calling the API themselves.

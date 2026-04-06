@@ -280,6 +280,15 @@ The Orchestrator is the sole writer of this file. Leads read it to orient
 themselves after a phase transition. Leads do not write to it directly; they
 report to the Orchestrator, who updates the state.
 
+**Scaling note.** For sprints with 3+ workstreams, consider replacing the single
+state file with per-workstream JSONL scratchpads. Each workstream lead maintains
+a scratchpad at a path like `sprints/<slug>/<workstream-slug>.jsonl`. Entry
+types: `lock` (file claimed by a Bee), `finding` (noteworthy discovery for the
+Orchestrator), `warning` (flag requiring attention). The Orchestrator reads
+across all scratchpads at phase gates rather than maintaining a central file.
+This scales better because Bees append to their own workstream scratchpad without
+touching files owned by other workstreams.
+
 ---
 
 ## Cross-Workstream Dependencies
