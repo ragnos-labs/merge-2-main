@@ -360,4 +360,5 @@ One bad worker can invalidate the entire batch. Validate all workers before stag
 
 - [Patchwork](patchwork.md): fewer than 4 tasks, no sub-agents needed
 - [Research Swarm](research-swarm.md): scan-driven discovery before execution, manifest-based waves
-- [Hive Mind](hive-mind.md): agents that coordinate with each other, not just with a lead
+- [Hive Mind 2-Tier](hive-mind-2tier.md): agents that coordinate with each other, not just with a lead
+- [Hive Mind 3-Tier](hive-mind-3tier.md): multi-workstream orchestration at scale

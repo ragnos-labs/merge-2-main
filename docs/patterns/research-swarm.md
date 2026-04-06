@@ -611,8 +611,8 @@ prompt.
 
 ## Related Documents
 
-- [Patterns overview](../references/patterns-overview.md)
+- [Patterns Overview](overview.md)
 - [Worker Swarm](worker-swarm.md): for executing defined work in parallel
 - [Patchwork](patchwork.md): for small, mechanical, single-agent fix batches
-- [Hive Mind](hive-mind.md): for large coordinated campaigns requiring persistent state
-- [Agent prompt templates](../templates/agent-prompt-templates.md)
+- [Hive Mind 2-Tier](hive-mind-2tier.md): for coordinated campaigns requiring persistent state
+- [Hive Mind 3-Tier](hive-mind-3tier.md): for large multi-workstream campaigns

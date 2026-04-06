@@ -191,4 +191,4 @@ large single workstream is still 2-tier.
 - [Hive Mind 2-Tier](../patterns/hive-mind-2tier.md)
 - [Hive Mind 3-Tier](../patterns/hive-mind-3tier.md)
 - [Worktree Sprint](../patterns/worktree-sprint.md)
-- [Full Overview](../guides/overview.md)
+- [Patterns Overview](../patterns/overview.md)

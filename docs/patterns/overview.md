@@ -148,7 +148,7 @@ Hive Mind is the autonomous coordination pattern. It uses a formal team structur
 
 Both tiers follow a nine-phase workflow: Audit, Design, Refactor, Test, Harden Tests, Retest, Debug, Rerun, Ship. The lead gates every phase transition. No shortcuts.
 
-Full reference: [./hive-mind.md](./hive-mind.md)
+Full reference: [2-Tier](./hive-mind-2tier.md) | [3-Tier](./hive-mind-3tier.md)
 
 ---
 
@@ -250,7 +250,7 @@ Task (spawn bee)         spawn_agent(role: "worker")
 
 Patchwork and Worker Swarm work identically on both surfaces. Research Swarm manifest execution is surface-agnostic (the manifest format is the same; the agent runner adapts). Hive Mind has a dedicated Codex adapter because the messaging and task-list primitives differ substantially.
 
-Full Codex reference: [./hive-mind-codex.md](./hive-mind-codex.md)
+Full Codex reference: [./codex-runtime.md](./codex-runtime.md)
 
 ---
 
@@ -295,9 +295,10 @@ Before spawning agents for any multi-agent run, verify:
 - [./patchwork.md](./patchwork.md): Patchwork pattern detail
 - [./worker-swarm.md](./worker-swarm.md): Worker Swarm SOP and config templates
 - [./research-swarm.md](./research-swarm.md): Research Swarm manifest format and wave design
-- [./hive-mind.md](./hive-mind.md): Hive Mind SOP, 9-phase workflow, communication matrix
-- [./hive-mind-codex.md](./hive-mind-codex.md): Hive Mind Codex runtime adapter
+- [./hive-mind-2tier.md](./hive-mind-2tier.md): Hive Mind 2-Tier SOP, 9-phase workflow
+- [./hive-mind-3tier.md](./hive-mind-3tier.md): Hive Mind 3-Tier hierarchy, effort thermostat
+- [./codex-runtime.md](./codex-runtime.md): Hive Mind Codex runtime adapter
 - [./worktree-sprint.md](./worktree-sprint.md): Worktree Sprint lifecycle and branch hierarchy
 - [../guides/model-selection.md](../guides/model-selection.md): Model and effort selection matrix
 - [../guides/sprint-planning.md](../guides/sprint-planning.md): Sprint artifacts and plan-to-code ratio
-- [../guides/tdd-contracts.md](../guides/tdd-contracts.md): TDD contract template and enforcement by pattern
+- [../guides/tdd-integration.md](../guides/tdd-integration.md): TDD integration across multi-agent patterns

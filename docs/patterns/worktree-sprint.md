@@ -413,5 +413,6 @@ The sprint branch `sprint/auth-refactor` is now ready for review or a pull reque
 ## Related
 
 - [Worker Swarm](./worker-swarm.md): the coordination pattern most commonly composed with Worktree Sprint
-- [Hive Mind](./hive-mind.md): large-scale coordination that can use worktrees as its isolation layer
+- [Hive Mind 2-Tier](./hive-mind-2tier.md): single-workstream coordination with worktree isolation
+- [Hive Mind 3-Tier](./hive-mind-3tier.md): multi-workstream coordination that benefits most from worktree isolation
 - [Overview](./overview.md): decision matrix for choosing between all patterns

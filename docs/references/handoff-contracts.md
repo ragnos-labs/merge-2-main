@@ -291,5 +291,5 @@ a contract in its response.
 - [Hive Mind 2-Tier Pattern](../patterns/hive-mind-2tier.md)
 - [Hive Mind 3-Tier Pattern](../patterns/hive-mind-3tier.md)
 - [Worker Swarm Pattern](../patterns/worker-swarm.md)
-- [Checkpoint Protocol](checkpoint-protocol.md)
-- [Sprint Artifacts](sprint-artifacts.md)
+- [Checkpoint Protocol](../guides/checkpoint-protocol.md)
+- [Sprint Artifacts](../guides/sprint-artifacts.md)

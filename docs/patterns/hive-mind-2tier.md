@@ -699,7 +699,7 @@ Track these per sprint to identify process health:
   workstreams, each with its own sub-lead
 - [worker-swarm.md](worker-swarm.md): Simpler fire-and-forget pattern for well-defined
   parallel work
-- [pick-your-pattern.md](../references/pick-your-pattern.md): Decision guide for
-  choosing between Patchwork, Worker Swarm, and Hive Mind variants
-- [teammate-prompt-templates.md](../templates/teammate-prompt-templates.md): Full
-  template library for spawning teammates across different roles and phases
+- [Decision Tree](../guides/decision-tree.md): decision guide for choosing between
+  Patchwork, Worker Swarm, and Hive Mind variants
+- [Orchestrator Prompt](../templates/orchestrator-prompt.md): prompt template for
+  spawning and coordinating teammates
