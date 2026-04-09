@@ -62,7 +62,8 @@ The patterns are about controlled coordination, not just more coordination.
 
 ## How To Use This Repo
 
-You do not need to read everything.
+You do not need to read everything (but you probably should, but most of you won't. I mean, I wouldn't) 
+What would I do? Point my coding agent at the repo and ask it "what's legit? what's bogus? what should we consider folding into our ops?" Something like that. 
 
 1. Pick the pattern first.
 2. Pick the runtime second.
