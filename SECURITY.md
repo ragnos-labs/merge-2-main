@@ -4,7 +4,7 @@
 
 If you discover a security vulnerability in this project, please report it responsibly.
 
-**Email:** labs@ragnos.io
+**Email:** sup@ragnos.io
 
 Please include:
 - Description of the vulnerability
