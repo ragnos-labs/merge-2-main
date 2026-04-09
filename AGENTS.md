@@ -12,9 +12,10 @@ working example of what a good AGENTS.md looks like.
 ## Repo Purpose
 
 **merge-2-main** is a methodology library for orchestrating 2 to 30+ AI coding
-agents on real software engineering work. It documents five coordination
-patterns plus cross-cutting guides, reference schemas, and worked examples.
-Hive Mind is the first complete layer; more layers are planned.
+agents on real software engineering work. It documents four coordination
+patterns, one infrastructure layer, cross-cutting guides, reference schemas,
+and worked examples. Hive Mind is the first complete layer; more layers are
+planned.
 
 The framework is tool-agnostic: the patterns and principles apply regardless of
 whether you are running on Claude Code, Codex, or OpenClaw. Runtime-specific
@@ -129,7 +130,7 @@ The patterns documented here are runtime-agnostic. They have been validated on:
 - **Claude Code** (Anthropic): `TeamCreate`, `SendMessage`, `Task` tool,
   `run_in_background=true`
 - **Codex** (OpenAI): `spawn_agent`, `send_input`, `wait`, `close_agent`
-- **OpenClaw**: follows the Claude Code coordination model
+- **OpenClaw**: session dispatch plus announce-back orchestration
 
 Primitive mappings between runtimes are in `docs/runtimes/` and the short
 compatibility section in `docs/core/patterns/overview.md`.

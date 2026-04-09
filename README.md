@@ -16,7 +16,7 @@ You get:
 - **4 worked examples** showing full end-to-end workflows
 - **Ready-to-use templates** for prompts, configs, and sprint artifacts
 
-Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex CLI](https://github.com/openai/codex), and OpenClaw. The patterns are tool-agnostic; runtime specifics live in dedicated surface docs.
+Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex CLI](https://github.com/openai/codex), and OpenClaw. The methodology is tool-agnostic; runtime specifics live in dedicated surface docs.
 
 ## Quick Start: Pick Your Pattern
 

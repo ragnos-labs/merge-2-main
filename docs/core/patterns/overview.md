@@ -241,13 +241,13 @@ layer changes how you spawn agents, exchange handoffs, and recover from
 interruptions, not which pattern you chose.
 
 ```
-+--------------+-----------------------+----------------------------+
-| Surface      | What Changes          | Canonical Entry Point      |
-+--------------+-----------------------+----------------------------+
-| Claude Code  | Native team/task tools| ../../runtimes/claude-code/|
-| Codex        | Sandboxed agent threads| ../../runtimes/codex/     |
-| OpenClaw     | Announce-back sessions| ../../runtimes/openclaw/   |
-+--------------+-----------------------+----------------------------+
++--------------+------------------------+----------------------------------------------+
+| Surface      | What Changes           | Canonical Entry Point                        |
++--------------+------------------------+----------------------------------------------+
+| Claude Code  | Native team/task tools | ../../runtimes/claude-code/overview.md       |
+| Codex        | Sandboxed agent threads| ../../runtimes/codex/overview.md             |
+| OpenClaw     | Announce-back sessions | ../../runtimes/openclaw/overview.md          |
++--------------+------------------------+----------------------------------------------+
 ```
 
 Routing rule:
