@@ -13,9 +13,9 @@ what `merge-2-main` is trying to do:
 - make LLM workflows less hand-wavey
 - keep the stack as portable as practical, even when reality gets sticky
 
-These are not the only good teams or projects in the ecosystem. They are just
-the ones that repeatedly show up in how we work, what we trust, and what we
-point people toward when they want a serious starting point.
+These are not the only good teams or projects in the ecosystem. They are the
+ones that most directly show up in our actual ops, or that stay close enough
+to the work that we keep them on the radar.
 
 ## Non-Affiliation Note
 
@@ -81,16 +81,6 @@ real infrastructure behind them.
 - Fit with this repo: a strong baseline for trace, log, and metric collection
   in agent-heavy systems
 
-#### Grafana Alloy
-
-- Repo: [grafana/alloy](https://github.com/grafana/alloy)
-- Why it matters: programmable collection and routing layer that builds on
-  OpenTelemetry Collector ideas
-- Why we respect the team: it is one of the cleaner bridges between standards,
-  collection, and the rest of the Grafana stack
-- Fit with this repo: useful when you want one place to reason about what data
-  gets collected and where it goes
-
 ### Traces, Logs, Metrics, And Dashboards
 
 #### Grafana
@@ -118,17 +108,8 @@ real infrastructure behind them.
 - Why it matters: log aggregation and querying
 - Why we respect the team: Loki keeps logs in the same broader observability
   conversation instead of treating them as an isolated graveyard
-- Fit with this repo: useful for execution logs, agent output, failure review,
-  and debugging messy runs
-
-#### Grafana Mimir
-
-- Repo: [grafana/mimir](https://github.com/grafana/mimir)
-- Why it matters: scalable metrics backend for Prometheus-style workloads
-- Why we respect the team: it makes long-horizon and multi-tenant metrics less
-  painful in real environments
-- Fit with this repo: helpful when you care about trend lines, health signals,
-  and sustained operational telemetry rather than one-off debugging
+- Fit with this repo: this is part of our actual observability surface today
+  for execution logs, failure review, and debugging messy runs
 
 #### Prometheus
 
@@ -139,11 +120,49 @@ real infrastructure behind them.
 - Fit with this repo: metrics and alerting are part of the evidence chain, not
   just dashboard decoration
 
+### Supporting Infrastructure
+
+#### Redis
+
+- Repo: [redis/redis](https://github.com/redis/redis)
+- Why it matters: fast cache and coordination layer that shows up behind other
+  services and in some workflow plumbing
+- Why we respect the team: Redis remains one of the standard building blocks
+  for "this system needs fast shared state" problems
+- Fit with this repo: this is part of our actual ops, but more as supporting
+  infrastructure than as a front-of-house methodology surface
+
+## Adjacent Projects We Respect
+
+These projects are relevant and respectable, but we should not pretend they are
+currently central to our day-to-day stack if they are not.
+
+### Grafana Alloy
+
+- Repo: [grafana/alloy](https://github.com/grafana/alloy)
+- Why it matters: programmable collection and routing layer that builds on
+  OpenTelemetry Collector ideas
+- Why we respect the team: it is one of the cleaner bridges between standards,
+  collection, and the rest of the Grafana stack
+- Current stance: adjacent and worth watching, but not a confirmed core part of
+  our live ops right now
+
+### Grafana Mimir
+
+- Repo: [grafana/mimir](https://github.com/grafana/mimir)
+- Why it matters: scalable metrics backend for Prometheus-style workloads
+- Why we respect the team: it makes long-horizon and multi-tenant metrics less
+  painful in real environments
+- Current stance: relevant as the stack grows, but not something we should
+  present as a current core dependency
+
 ## How To Read This Page
 
 Use this page as:
 
 - a stack map
+- a rough split between "we use this now" and "we respect this enough to keep
+  nearby"
 - a starting point for your own observability architecture
 - a list of teams worth watching if you care about agent operations,
   instrumentation, and reviewability
