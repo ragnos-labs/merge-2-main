@@ -69,6 +69,7 @@ Reusable contracts, schemas, and source maps:
 - [Retrospective Template](./references/retrospective-template.md)
 - [Drift Detection](./references/drift-detection.md)
 - [Positive Enforcement](./references/positive-enforcement.md)
+- [Ecosystem Radar](./references/ecosystem-radar.md)
 - [Security Tooling Starting Points](./references/security-tooling-starting-points.md)
 - [Ecosystem Source Map](./references/ecosystem-source-map.md)
 - [AI Philosophy And Implications](./references/ai-philosophy-and-implications.md)

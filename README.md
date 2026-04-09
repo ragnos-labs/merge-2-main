@@ -206,6 +206,8 @@ Cross-cutting practices that apply across all patterns:
   pattern drift signals
 - [Positive Enforcement](docs/core/references/positive-enforcement.md): Prompt
   design principles
+- [Ecosystem Radar](docs/core/references/ecosystem-radar.md): External repos
+  and resource links that are on our radar, not under our control
 - [Security Tooling Starting
   Points](docs/core/references/security-tooling-starting-points.md): Layered
   scanner categories and official docs
