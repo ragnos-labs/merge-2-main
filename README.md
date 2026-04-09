@@ -1,4 +1,4 @@
-# Hive Mind
+# Merge 2 Main
 
 **Multi-agent coordination framework for Claude Code and Codex.**
 
