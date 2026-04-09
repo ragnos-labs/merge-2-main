@@ -45,7 +45,7 @@ This repo is not:
 
 The patterns here are opinionated about process, reviewability, and scope
 control. They are not a claim that one vendor, one model, or one topology wins
-forever.
+forever (spoiler, it does not)
 
 ## What It Optimizes For
 
