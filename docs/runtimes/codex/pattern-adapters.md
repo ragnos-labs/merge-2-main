@@ -122,30 +122,37 @@ declarations alone.
 multi_agent = true
 
 [agents]
-max_threads = 6
+max_threads = <set to your runtime budget>
 max_depth   = 1
-job_max_runtime_seconds = 3600
+job_max_runtime_seconds = <set to your runtime budget>
 ```
 
 Or toggle it interactively: type `/experimental` inside a Codex session and
 select "Multi-agents."
 
-**Thread budget and the 5-hour rolling compute window:**
+**Thread budget and compute window:**
 
-Codex enforces a 5-hour rolling compute window per session. All spawned agents
-and the orchestrator itself count against this window. For large Hive Mind runs,
-structure your decomposition so the full run completes within this budget:
+Codex runtime limits evolve. All spawned agents and the orchestrator count
+against the runtime budget. For large Hive Mind runs, structure your
+decomposition so the full run completes within the real budget available to the
+session:
 
-- Limit each phase to 3-4 concurrent leads (leaving headroom under `max_threads = 6`).
+- Limit each phase to a conservative number of concurrent leads, leaving
+  headroom for the orchestrator and any verifier threads.
 - Close completed threads promptly: lingering idle threads consume both the
   thread budget and the compute window.
-- For runs that approach the 5-hour limit, write checkpoint context to
+- For runs that approach the runtime limit, write checkpoint context to
   `checkpoints.json` at each phase gate so the run can be resumed in a new
   session if needed.
 
 If a run must span multiple sessions, treat the checkpoint file as the
 hand-off artifact and re-spawn the orchestrator with it at the start of the
 next session.
+
+If the exact limits or configuration fields in this section differ from the
+runtime you are using, prefer the official Codex docs and keep the methodology
+rule: design to the real thread and compute budget you have, not the one you
+wish you had.
 
 ---
 
@@ -160,13 +167,13 @@ prevents wasted compute budget on agents that start with wrong context.
    before proceeding.
 
 2. **Check thread budget.** Review `max_threads` in `.codex/config.toml`.
-   Default is 6. Count how many agents your first wave needs. If the wave
-   exceeds the thread limit, plan the stagger before spawning.
+   Count how many agents your first wave needs. If the wave exceeds the thread
+   limit, plan the stagger before spawning.
 
 3. **Decompose tasks to fit within the compute window.** Estimate how many
    phases your run requires. Structure the decomposition so all phases complete
-   within the 5-hour rolling compute window. If the run is too large, split it
-   into checkpointed sessions with explicit hand-off artifacts.
+   within the runtime budget available to the session. If the run is too large,
+   split it into checkpointed sessions with explicit hand-off artifacts.
 
 4. **Set role via `.codex/agents/<role>.toml`.** Confirm the role config files
    exist for every role you will spawn (lead, worker, explorer, verifier). If
@@ -308,8 +315,9 @@ Workers report back in this format:
 }
 ```
 
-**Thread budget note:** With `max_threads = 6`, a Worker Swarm can run at most
-6 tasks in parallel. Queue excess tasks and spawn them as threads close.
+**Thread budget note:** A Worker Swarm can only run as many tasks in parallel
+as the session thread budget allows. Queue excess tasks and spawn them as
+threads close.
 
 ---
 
@@ -440,8 +448,8 @@ Orchestrator (root session, reasoning: high)
   |-- Lead D: Infra      -- Workers + Verifier
 ```
 
-With `max_threads = 6`, a 3-tier run with 4+ leads must stagger: close Phase 1
-leads before spawning Phase 2 leads.
+When the session thread budget is tight, stagger larger 3-tier runs: close
+completed Phase 1 leads before spawning the next wave.
 
 **The orchestrator never implements.** It decomposes, dispatches, gates phase
 transitions, and synthesizes. Leads own workstreams. Workers own tasks.
@@ -709,7 +717,7 @@ PASTE_SOLUTION_DESIGN_HERE
 </execution_flow>
 
 <constraints>
-- max_threads = 6: stagger waves if needed.
+- if thread budget is tight: stagger waves if needed.
 - max_depth = 1: leads spawn workers; workers do not spawn sub-workers.
 - All file writes must be committed before reporting phase_complete.
 - Never commit to the main branch. Use a feature branch.
@@ -857,9 +865,9 @@ named agent that persists across Codex sessions. Long-running leads must be
 re-spawned with checkpoint context if the orchestrator session is interrupted.
 The run ledger is the mitigation, not a full replacement.
 
-**Thread limit bounds parallelism.** The default `max_threads = 6` means large
-topologies must run in waves. Design your decomposition with the thread budget
-in mind: close completed threads before spawning the next wave.
+**Thread limit bounds parallelism.** Large topologies must run in waves when
+the runtime thread budget is small. Design your decomposition with the actual
+thread budget in mind: close completed threads before spawning the next wave.
 
 **max_depth = 1.** Workers cannot spawn sub-workers. If a task is too large
 for a single worker, the lead must break it further before dispatching. There is
