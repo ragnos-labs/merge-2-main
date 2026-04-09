@@ -45,10 +45,10 @@ Field notes:
 - `constraints`: optional bounds the receiver must respect. Common keys:
   `scope_files`, `deadline_phase`, `model_floor`. Omit if not needed.
 
-> **`model_tier` resolution**: shorthand tier strings (`"sonnet"`, `"opus"`,
-> `"haiku"`) used in constraints or task payloads must be resolved to concrete
-> model IDs at runtime before being passed to any LLM call. Tier names are
-> human-readable aliases only. See
+> **`model_tier` resolution**: use portable tier labels such as
+> `"fast"`, `"standard"`, or `"most_capable"` in constraints or task payloads.
+> Resolve them to concrete model IDs at runtime before making any LLM call.
+> Tier names are human-readable aliases only. See
 > [Model Selection Guide](../guides/model-selection.md) for the current
 > mapping from tier names to model IDs.
 
@@ -292,14 +292,13 @@ mandate travels with the repo and does not require per-task instruction.
 This method works across all runtimes including async batch runners where
 the orchestrator and worker never share a live channel.
 
-### 4. OpenClaw announce-back
+### 4. Runtime callback surface
 
-The `sessions_spawn` tool in OpenClaw returns a `runId`. When the spawned
-session completes, the result is posted back to the orchestrator's channel.
-The contract JSON should be the content of that response: the orchestrator
-reads the response body, parses the JSON contract, and uses it to advance
-the sprint state. This method is native to the OpenClaw runtime and requires
-no file system writes.
+Some runtimes support callback-style completion, where a spawned task posts its
+result back to a channel, inbox, or orchestrator-owned surface when it
+finishes. In those cases, the contract JSON should be the callback payload that
+the orchestrator parses to advance sprint state. This method is especially
+useful when a shared filesystem is unavailable or undesirable.
 
 For exact transport mechanics by runtime, see:
 

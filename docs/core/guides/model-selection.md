@@ -1,6 +1,6 @@
 ---
 title: Model Selection and Cost Optimization
-description: Strategy for choosing model tiers and effort levels in multi-agent workflows, covering the sonnet-first philosophy, cost tradeoffs, token hygiene, and per-pattern defaults.
+description: Strategy for choosing model tiers and effort levels in multi-agent workflows, covering standard-first selection, cost tradeoffs, token hygiene, and per-pattern defaults.
 ---
 
 # Model Selection and Cost Optimization

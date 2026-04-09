@@ -14,8 +14,7 @@ working example of what a good AGENTS.md looks like.
 **merge-2-main** is a methodology library for orchestrating 2 to 30+ AI coding
 agents on real software engineering work. It documents four coordination
 patterns, one infrastructure layer, cross-cutting guides, reference schemas,
-and worked examples. Hive Mind is the first complete layer; more layers are
-planned.
+worked examples, and runtime adapters.
 
 The framework is tool-agnostic: the patterns and principles apply regardless of
 whether you are running on Claude Code, Codex, or OpenClaw. Runtime-specific
@@ -25,7 +24,7 @@ notes live under `docs/runtimes/`.
 
 ## Repo Structure
 
-```
+```text
 docs/
   core/
     patterns/   # Universal coordination patterns
@@ -62,6 +61,10 @@ Agents working on this repo must follow these rules on every task.
    must not edit the same file. Claim a file before writing to it. Resolve
    conflicts at the planning step, not at merge time.
 
+6. **Respect the voice boundary.** Placeholder docs, ecosystem pages, and the
+   root README may carry light personality. Core guides, references,
+   templates, and examples stay plain, technical, and low-sass.
+
 ---
 
 ## Behavioral Contracts
@@ -86,6 +89,7 @@ One owner per file per phase. No exceptions.
 
 <verification_loop>
 After every edit to a document:
+
 1. Re-read the full file.
 2. Verify your change appears exactly as intended.
 3. Verify you did not accidentally remove or corrupt adjacent content.
@@ -93,6 +97,14 @@ After every edit to a document:
 
 Do not commit immediately after writing. The re-read step is mandatory.
 </verification_loop>
+
+<voice_boundary>
+Use humor sparingly and only on border surfaces such as README-adjacent docs,
+ecosystem pages, and explicit placeholders. When writing methodology docs,
+references, templates, and examples, keep the tone direct, technical, and
+informational. Character is allowed at the edge of the repo, not in the middle
+of the operating manual.
+</voice_boundary>
 
 ---
 
@@ -106,9 +118,9 @@ Start with `docs/runtimes/codex/overview.md`, then read
 bootstrap flow.
 
 **2. Concurrency limit.**
-Codex defaults to 6 simultaneous agent threads (`max_threads = 6`). Design
-your decomposition to fit within this budget. For topologies larger than 6
-active threads, run in waves: close completed threads before spawning the
+Codex thread budgets are usually tighter than the methodology itself. Design
+your decomposition to fit within the runtime you actually have available. For
+larger topologies, run in waves: close completed threads before spawning the
 next batch. A config template lives at `docs/templates/codex/codex-config.toml`.
 
 **3. CLI vs IDE context loading.**
@@ -121,19 +133,37 @@ formatted for direct paste into IDE sessions.
 Start with `docs/core/guides/decision-tree.md`. After you pick a pattern,
 switch to the matching runtime doc under `docs/runtimes/`.
 
+**5. Codex subagent defaults.**
+Subagents are opt-in. Spawn them when the user explicitly asks to parallelize,
+delegate, swarm, or speed work up. Keep the immediate blocker on the main
+thread. Default to 2 to 4 concurrent child agents, keep write ownership
+disjoint, and ask children for concise structured handoffs instead of raw
+dumps.
+
+**6. Instruction hygiene.**
+Keep root `AGENTS.md` short and stable. Put role-specific behavior in
+`.codex/agents/*.toml` and deeper runtime detail in `docs/runtimes/`. If the
+file grows, split guidance into nested overrides rather than inflating the root
+bootstrap. If instructions look stale in Codex, restart the session in the
+target directory so the instruction chain is rebuilt.
+
 ---
 
 ## Runtime Coverage
 
 The patterns documented here are runtime-agnostic. They have been validated on:
 
-- **Claude Code** (Anthropic): `TeamCreate`, `SendMessage`, `Task` tool,
-  `run_in_background=true`
-- **Codex** (OpenAI): `spawn_agent`, `send_input`, `wait`, `close_agent`
-- **OpenClaw**: session dispatch plus announce-back orchestration
+- **Claude Code** (Anthropic): hookable interactive runtime with native agent
+  coordination primitives
+- **Codex** (OpenAI): sandboxed agent threads with `AGENTS.md`-guided behavior
+- **OpenClaw**: local-first agent runtime with workspace, memory, and channel
+  surfaces
 
 Primitive mappings between runtimes are in `docs/runtimes/` and the short
 compatibility section in `docs/core/patterns/overview.md`.
+
+If you need to verify a runtime-specific claim against the current vendor docs,
+start with `docs/core/references/ecosystem-source-map.md`.
 
 ---
 

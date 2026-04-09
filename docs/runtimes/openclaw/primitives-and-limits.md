@@ -1,22 +1,26 @@
 ---
 title: OpenClaw Primitives and Limits
-description: OpenClaw dispatch model, announce-back behavior, and concurrency limits.
+description: OpenClaw dispatch model, channel callbacks, and concurrency considerations.
 ---
 
 # OpenClaw Primitives and Limits
 
-OpenClaw uses session dispatch plus announce-back completion, which makes it
-feel closer to a daemon or control plane than to an interactive terminal agent.
+OpenClaw behaves more like a local control plane or daemon runtime than a
+traditional interactive coding shell.
 
 Primary characteristics:
 
-- Dispatch via `sessions_spawn`
-- Completion posted back to a shared channel
-- Default concurrency around 8 sessions
-- Shallow default nesting unless explicitly configured otherwise
-- Machine-to-machine dispatch available through its gateway surface
+- Work is dispatched through session or task surfaces rather than a single
+  foreground terminal loop
+- Completion can be posted back to a channel, inbox, or other shared surface
+- Parallelism depends on local config, hardware, and gateway setup
+- Shallow nesting is usually easier to recover than deep recursive fan-out
+- Machine-to-machine dispatch is possible through gateway-style surfaces
 
 Design implication:
 
 - Prefer OpenClaw for durable background work, not for the repo's primary
   interactive coding path.
+
+Verify current primitive names and operational limits against the official
+OpenClaw docs before freezing them into another workflow.

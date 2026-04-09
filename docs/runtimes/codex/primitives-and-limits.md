@@ -1,13 +1,14 @@
 ---
 title: Codex Primitives and Limits
-description: Core Codex coordination primitives, thread limits, and sandbox behavior.
+description: Core Codex coordination primitives, concurrency constraints, and sandbox behavior.
 ---
 
 # Codex Primitives and Limits
 
-Codex runs the universal patterns through sandboxed agent threads.
+Codex runs the universal patterns through sandboxed agent threads or task
+surfaces.
 
-Primary primitives:
+Typical primitives:
 
 - `spawn_agent`
 - `send_input`
@@ -27,3 +28,6 @@ Operational rule:
 
 - Treat thread budget and file ownership as hard planning constraints, not soft
   runtime advice
+
+Verify exact primitive names and current runtime limits against the official
+Codex docs before treating them as fixed.

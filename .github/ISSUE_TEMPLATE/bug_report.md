@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 **Document**
-Which file has the issue? (e.g., `docs/patterns/worker-swarm.md`)
+Which file has the issue? (e.g., `docs/core/patterns/worker-swarm.md`)
 
 **Description**
 What is wrong or unclear?

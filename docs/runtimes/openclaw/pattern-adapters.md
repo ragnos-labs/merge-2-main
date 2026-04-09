@@ -1,6 +1,6 @@
 ---
 title: OpenClaw Pattern Adapters
-description: How the universal patterns map onto OpenClaw's session and announce-back model.
+description: How the universal patterns map onto OpenClaw's session and callback-oriented runtime model.
 ---
 
 # OpenClaw Pattern Adapters
@@ -14,7 +14,7 @@ Possible, but rarely the best reason to choose OpenClaw.
 ## Worker Swarm
 
 Maps reasonably well when the operator wants to dispatch a bounded batch and
-collect results asynchronously through announce-back.
+collect results asynchronously through callback-style completion.
 
 ## Research Swarm
 
@@ -30,3 +30,6 @@ Claude Code or Codex. Use with caution and keep the team shallow.
 
 Treat worktree boundaries as external infrastructure; pass them into the
 session prompt the same way you would pass other file-scope constraints.
+
+Verify exact primitive names and callback mechanics against the official
+OpenClaw docs before freezing them into a reusable workflow.
