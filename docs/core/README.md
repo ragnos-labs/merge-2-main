@@ -79,6 +79,7 @@ Reusable contracts, schemas, and source maps:
 
 Deliberate placeholders for topics that matter but are not done yet:
 
+- [How We Work At RAGnos](./guides/how-we-work-at-ragnos.md)
 - [Character Layer](./guides/character-layer.md)
 
 ### Examples

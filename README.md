@@ -294,6 +294,11 @@ schedules.
 correction loops, but only when the process underneath stays reviewable. See
 [Behavior Design](docs/core/guides/behavior-design.md).
 
+**How we work at RAGnos.** Fast experiments are welcome. Unreviewable chaos is
+not. If you want the public-safe mad-scientist version of our operating
+posture, read [How We Work At
+RAGnos](docs/core/guides/how-we-work-at-ragnos.md).
+
 ## Emerging Topics
 
 Some lanes are intentionally stubbed because they matter, but they are not yet
