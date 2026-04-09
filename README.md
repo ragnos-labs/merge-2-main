@@ -1,6 +1,6 @@
 # merge-2-main
 
-**Multi-agent coordination framework for Claude Code and Codex.**
+**Multi-agent coordination framework for Claude Code, Codex, and OpenClaw.**
 
 Patterns, guides, and templates for orchestrating 2 to 30+ AI agents on real software engineering tasks. Built from production experience running thousands of multi-agent sprints.
 
@@ -16,7 +16,7 @@ You get:
 - **4 worked examples** showing full end-to-end workflows
 - **Ready-to-use templates** for prompts, configs, and sprint artifacts
 
-Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [OpenAI Codex CLI](https://github.com/openai/codex). The patterns are tool-agnostic; the templates include both runtimes.
+Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex CLI](https://github.com/openai/codex), and OpenClaw. The methodology is tool-agnostic; runtime specifics live in dedicated surface docs.
 
 ## Quick Start: Pick Your Pattern
 
@@ -41,71 +41,83 @@ Answer these questions in order. Stop at the first "yes."
 
 Need file isolation between workstreams? Add the **Worktree Sprint** layer on top of any pattern.
 
-## Patterns
+## Core Methodology
+
+Universal pattern docs:
 
 | Pattern | Agents | Best For | Cost |
 |---------|--------|----------|------|
-| [Patchwork](docs/patterns/patchwork.md) | 1 | Quick fixes, renames, config changes | Lowest |
-| [Worker Swarm](docs/patterns/worker-swarm.md) | 4-12 | Independent parallel tasks | Low |
-| [Research Swarm](docs/patterns/research-swarm.md) | 4-16 | Codebase audits, web research, landscape analysis | Low-Medium |
-| [Hive Mind 2-Tier](docs/patterns/hive-mind-2tier.md) | 3-8 | Complex single-workstream features | Medium |
-| [Hive Mind 3-Tier](docs/patterns/hive-mind-3tier.md) | 15-30 | Multi-workstream sprints | High |
-| [Worktree Sprint](docs/patterns/worktree-sprint.md) | Any | Git isolation layer (composable with any pattern) | +Minimal |
+| [Patchwork](docs/core/patterns/patchwork.md) | 1 | Quick fixes, renames, config changes | Lowest |
+| [Worker Swarm](docs/core/patterns/worker-swarm.md) | 4-12 | Independent parallel tasks | Low |
+| [Research Swarm](docs/core/patterns/research-swarm.md) | 4-16 | Codebase audits, web research, landscape analysis | Low-Medium |
+| [Hive Mind 2-Tier](docs/core/patterns/hive-mind-2tier.md) | 3-8 | Complex single-workstream features | Medium |
+| [Hive Mind 3-Tier](docs/core/patterns/hive-mind-3tier.md) | 15-30 | Multi-workstream sprints | High |
+| [Worktree Sprint](docs/core/patterns/worktree-sprint.md) | Any | Git isolation layer (composable with any pattern) | +Minimal |
 
-Start with the [Pattern Overview](docs/patterns/overview.md) or the [Decision Tree](docs/guides/decision-tree.md).
+Start with the [Pattern Overview](docs/core/patterns/overview.md) or the [Decision Tree](docs/core/guides/decision-tree.md).
 
-## Guides
+## Runtime Surfaces
+
+Pick the runtime after you pick the pattern:
+
+- [Claude Code Runtime](docs/runtimes/claude-code/overview.md): interactive sessions, native background agents, team-style coordination
+- [Codex Runtime](docs/runtimes/codex/overview.md): sandboxed agent threads, `AGENTS.md`, per-role configs, programmatic orchestration
+- [OpenClaw Runtime](docs/runtimes/openclaw/overview.md): announce-back sessions, daemon-style dispatch, Bedrock-only constraints
+
+## Core Guides
 
 Cross-cutting practices that apply across all patterns:
 
-- [Decision Tree](docs/guides/decision-tree.md): Select the right pattern in under 60 seconds
-- [Model Selection](docs/guides/model-selection.md): Effort thermostat, cost optimization, tier assignment
-- [Sprint Planning](docs/guides/sprint-planning.md): Plan artifacts, file ownership, dependency graphs
-- [TDD Integration](docs/guides/tdd-integration.md): Red-Green-Refactor across multi-agent workflows
-- [Checkpoint Protocol](docs/guides/checkpoint-protocol.md): When and how agents pause for human review
-- [Sprint Artifacts](docs/guides/sprint-artifacts.md): Meta-logs, bug logs, and retrospective specs
-- [Post-Sprint Completion](docs/guides/post-sprint-completion.md): The 4-step ship pipeline
-- [Scribe](docs/guides/scribe.md): Background observer agent for sprint monitoring
+- [Decision Tree](docs/core/guides/decision-tree.md): Select the right pattern in under 60 seconds
+- [Model Selection](docs/core/guides/model-selection.md): Effort thermostat, cost optimization, tier assignment
+- [Sprint Planning](docs/core/guides/sprint-planning.md): Plan artifacts, file ownership, dependency graphs
+- [TDD Integration](docs/core/guides/tdd-integration.md): Red-Green-Refactor across multi-agent workflows
+- [Checkpoint Protocol](docs/core/guides/checkpoint-protocol.md): When and how agents pause for human review
+- [Sprint Artifacts](docs/core/guides/sprint-artifacts.md): Meta-logs, bug logs, and retrospective specs
+- [Post-Sprint Completion](docs/core/guides/post-sprint-completion.md): The 4-step ship pipeline
+- [Scribe](docs/core/guides/scribe.md): Background observer agent for sprint monitoring
 
-## References
+## Core References
 
-- [Anti-Patterns](docs/references/anti-patterns.md): 13 mistakes to avoid across all patterns
-- [Handoff Contracts](docs/references/handoff-contracts.md): Structured JSON agent-to-agent messages
-- [Research Manifest Schema](docs/references/research-manifest-schema.md): JSON schema for research tasks
-- [TDD Contracts Template](docs/references/tdd-contracts-template.md): Copy-paste test contract format
-- [Retrospective Template](docs/references/retrospective-template.md): Post-sprint review format
-- [Drift Detection](docs/references/drift-detection.md): Scope, goal, and pattern drift signals
-- [Positive Enforcement](docs/references/positive-enforcement.md): Prompt design principles
+- [Anti-Patterns](docs/core/references/anti-patterns.md): 13 mistakes to avoid across all patterns
+- [Handoff Contracts](docs/core/references/handoff-contracts.md): Structured JSON agent-to-agent messages
+- [Research Manifest Schema](docs/core/references/research-manifest-schema.md): JSON schema for research tasks
+- [TDD Contracts Template](docs/core/references/tdd-contracts-template.md): Copy-paste test contract format
+- [Retrospective Template](docs/core/references/retrospective-template.md): Post-sprint review format
+- [Drift Detection](docs/core/references/drift-detection.md): Scope, goal, and pattern drift signals
+- [Positive Enforcement](docs/core/references/positive-enforcement.md): Prompt design principles
 
 ## Templates
 
 Ready-to-use files for starting a sprint:
 
-- [Build Spec](docs/templates/build-spec.json): Sprint plan template (JSON)
-- [Research Manifest](docs/templates/research-manifest.json): Research swarm task list (JSON)
-- [Orchestrator Prompt](docs/templates/orchestrator-prompt.md): Hive Mind orchestrator instructions
-- [Scribe Prompt](docs/templates/scribe-prompt.md): Background observer instructions
-- [Codex Config](docs/templates/codex-config.toml): Multi-agent Codex setup
-- [Codex Agents](docs/templates/codex-agents/): Role configs (lead, worker, explorer, verifier)
+- [Build Spec](docs/templates/universal/build-spec.json): Sprint plan template (JSON)
+- [Research Manifest](docs/templates/universal/research-manifest.json): Research swarm task list (JSON)
+- [Orchestrator Prompt](docs/templates/universal/orchestrator-prompt.md): Hive Mind orchestrator instructions
+- [Scribe Prompt](docs/templates/universal/scribe-prompt.md): Background observer instructions
+- [Codex Config](docs/templates/codex/codex-config.toml): Multi-agent Codex setup
+- [Codex Agents](docs/templates/codex/codex-agents/): Role configs (lead, worker, explorer, verifier)
 
 ## Worked Examples
 
 End-to-end walkthroughs showing each pattern in action:
 
-- [Security Audit](docs/examples/security-audit.md): 30-agent Research Swarm auditing a web app's security posture, then handing findings to a Worker Swarm for fixes
-- [Feature Build](docs/examples/feature-build.md): 8-worker swarm building a notification system with email, SMS, and in-app channels
-- [Full Sprint](docs/examples/full-sprint.md): 20-agent Hive Mind 3-Tier migrating a session-based auth system to JWT across 4 workstreams
-- [Research Landscape](docs/examples/research-landscape.md): 10-agent internet research swarm evaluating vector database options
+- [Security Audit](docs/core/examples/security-audit.md): 30-agent Research Swarm auditing a web app's security posture, then handing findings to a Worker Swarm for fixes
+- [Feature Build](docs/core/examples/feature-build.md): 8-worker swarm building a notification system with email, SMS, and in-app channels
+- [Full Sprint](docs/core/examples/full-sprint.md): 20-agent Hive Mind 3-Tier migrating a session-based auth system to JWT across 4 workstreams
+- [Research Landscape](docs/core/examples/research-landscape.md): 10-agent internet research swarm evaluating vector database options
 
 ## Project Structure
 
 ```
 docs/
-  patterns/       # The 4 patterns + infrastructure layer + Codex adapter
-  guides/         # Cross-cutting practices (model selection, TDD, checkpoints)
-  references/     # Anti-patterns, schemas, templates, prompt design
-  examples/       # Full end-to-end worked examples
-  templates/      # Copy-paste JSON, TOML, and prompt files
+  core/
+    patterns/     # Universal coordination patterns
+    guides/       # Universal operating guidance
+    references/   # Schemas, anti-patterns, and contracts
+    examples/     # Worked examples with runtime assumptions
+  runtimes/       # Claude Code, Codex, and OpenClaw surface docs
+  templates/      # Universal templates plus runtime-specific configs
 ```
 
 ## Philosophy
