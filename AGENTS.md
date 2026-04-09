@@ -121,6 +121,20 @@ formatted for direct paste into IDE sessions.
 Start with `docs/core/guides/decision-tree.md`. After you pick a pattern,
 switch to the matching runtime doc under `docs/runtimes/`.
 
+**5. Codex subagent defaults.**
+Subagents are opt-in. Spawn them when the user explicitly asks to parallelize,
+delegate, swarm, or speed work up. Keep the immediate blocker on the main
+thread. Default to 2 to 4 concurrent child agents, keep write ownership
+disjoint, and ask children for concise structured handoffs instead of raw
+dumps.
+
+**6. Instruction hygiene.**
+Keep root `AGENTS.md` short and stable. Put role-specific behavior in
+`.codex/agents/*.toml` and deeper runtime detail in `docs/runtimes/`. If the
+file grows, split guidance into nested overrides rather than inflating the root
+bootstrap. If instructions look stale in Codex, restart the session in the
+target directory so the instruction chain is rebuilt.
+
 ---
 
 ## Runtime Coverage
