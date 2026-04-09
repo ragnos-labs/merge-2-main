@@ -65,6 +65,9 @@ Agents working on this repo must follow these rules on every task.
    root README may carry light personality. Core guides, references,
    templates, and examples stay plain, technical, and low-sass.
 
+7. **Run the repo gate before handoff.** Use `just tool` before opening or
+   updating a PR. The matching GitHub check is `docs-hygiene`.
+
 ---
 
 ## Behavioral Contracts
@@ -93,7 +96,8 @@ After every edit to a document:
 1. Re-read the full file.
 2. Verify your change appears exactly as intended.
 3. Verify you did not accidentally remove or corrupt adjacent content.
-4. Only then stage and commit.
+4. Run `just tool`.
+5. Only then stage and commit.
 
 Do not commit immediately after writing. The re-read step is mandatory.
 </verification_loop>

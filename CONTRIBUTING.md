@@ -17,7 +17,7 @@ coordination.
 1. Fork the repository
 2. Create a feature branch (`git checkout -b improve-worker-swarm-doc`)
 3. Make your changes
-4. Verify all relative links resolve
+4. Run `just tool`
 5. Submit a pull request
 
 ### What We Accept
@@ -43,6 +43,19 @@ coordination.
 - Concrete over abstract: show examples, not just rules
 - Every pattern doc should cover both Claude Code and Codex usage where
   applicable
+
+## Local Validation
+
+This repo ships a minimal local gate so contributors can match CI before they
+open a PR.
+
+- `just tool`: runs the full docs hygiene pass
+- `just lint-md`: checks markdown against the repo's lint profile
+- `just check-links`: verifies relative markdown links resolve
+- `just check-ascii`: catches non-ASCII drift
+
+GitHub runs the same `just tool` gate in the `docs-hygiene` workflow. That is
+the status check to require on `main`.
 
 ## Voice Boundaries
 
