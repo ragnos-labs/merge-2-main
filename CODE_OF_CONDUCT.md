@@ -30,7 +30,7 @@ Examples of unacceptable behavior:
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the project team at labs@ragnos.io. All complaints will be reviewed
+reported to the project team at sup@ragnos.io. All complaints will be reviewed
 and investigated promptly and fairly.
 
 ## Attribution
