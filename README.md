@@ -1,22 +1,24 @@
 # merge-2-main
 
-**Multi-agent coordination framework for Claude Code, Codex, and OpenClaw.**
+**A living field guide for multi-agent coding, review, and release discipline.**
 
-Patterns, guides, and templates for orchestrating 2 to 30+ AI agents on real software engineering tasks. Built from production experience running thousands of multi-agent sprints.
+Patterns, guides, references, and templates for orchestrating 2 to 30+ AI agents on real software engineering tasks. This repo is documentation-only by design: a public methodology layer, not a framework, SDK, or hosted service.
 
 ## What This Is
 
-A complete framework for coordinating AI coding agents. Not a library. Not an SDK. Markdown docs that structure how you think about, plan, and execute multi-agent work.
+A source-backed methodology library for agentic software work. The goal is to document the coordination patterns, review gates, audit hooks, and runtime adapters that help teams move quickly without losing traceability.
 
 You get:
-- **4 coordination patterns** from single-agent to 30-agent sprints
-- **1 infrastructure layer** for git-based isolation
-- **8 cross-cutting guides** covering model selection, TDD, checkpoints, and more
-- **7 reference docs** with anti-patterns, templates, and schemas
-- **4 worked examples** showing full end-to-end workflows
-- **Ready-to-use templates** for prompts, configs, and sprint artifacts
+- coordination patterns from single-agent work to large swarms
+- a git-isolation layer for parallel workstreams
+- cross-cutting guides for planning, tests, checkpoints, release gates, and artifacts
+- references for anti-patterns, handoffs, sourcing, and schemas
+- worked examples showing full end-to-end workflows
+- ready-to-use templates for prompts, configs, and sprint artifacts
 
-Works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex CLI](https://github.com/openai/codex), and OpenClaw. The methodology is tool-agnostic; runtime specifics live in dedicated surface docs.
+Works with [Claude Code](https://code.claude.com/docs/en), [OpenAI Codex](https://openai.com/index/introducing-codex/), and [OpenClaw](https://openclaw.im/docs/start/setup). The methodology is tool-agnostic; runtime specifics live in dedicated runtime docs.
+
+Canonical docs live under `docs/core`, `docs/runtimes`, and `docs/templates`. Legacy top-level paths under `docs/patterns`, `docs/guides`, `docs/references`, and `docs/templates/*` are compatibility shims only.
 
 ## Quick Start: Pick Your Pattern
 
@@ -56,13 +58,19 @@ Universal pattern docs:
 
 Start with the [Pattern Overview](docs/core/patterns/overview.md) or the [Decision Tree](docs/core/guides/decision-tree.md).
 
+Want the folder-level map first?
+
+- [Core Overview](docs/core/README.md)
+- [Runtime Overview](docs/runtimes/README.md)
+- [Template Overview](docs/templates/README.md)
+
 ## Runtime Surfaces
 
 Pick the runtime after you pick the pattern:
 
 - [Claude Code Runtime](docs/runtimes/claude-code/overview.md): interactive sessions, native background agents, team-style coordination
 - [Codex Runtime](docs/runtimes/codex/overview.md): sandboxed agent threads, `AGENTS.md`, per-role configs, programmatic orchestration
-- [OpenClaw Runtime](docs/runtimes/openclaw/overview.md): announce-back sessions, daemon-style dispatch, Bedrock-only constraints
+- [OpenClaw Runtime](docs/runtimes/openclaw/overview.md): local-first background execution, scheduled workflows, and provider-routing caveats
 
 ## Core Guides
 
@@ -73,6 +81,7 @@ Cross-cutting practices that apply across all patterns:
 - [Sprint Planning](docs/core/guides/sprint-planning.md): Plan artifacts, file ownership, dependency graphs
 - [TDD Integration](docs/core/guides/tdd-integration.md): Red-Green-Refactor across multi-agent workflows
 - [Checkpoint Protocol](docs/core/guides/checkpoint-protocol.md): When and how agents pause for human review
+- [Release Gate](docs/core/guides/release-gate.md): A public-safe `/ship` style checklist for review, commit, gate, and publish
 - [Sprint Artifacts](docs/core/guides/sprint-artifacts.md): Meta-logs, bug logs, and retrospective specs
 - [Post-Sprint Completion](docs/core/guides/post-sprint-completion.md): The 4-step ship pipeline
 - [Scribe](docs/core/guides/scribe.md): Background observer agent for sprint monitoring
@@ -86,6 +95,7 @@ Cross-cutting practices that apply across all patterns:
 - [Retrospective Template](docs/core/references/retrospective-template.md): Post-sprint review format
 - [Drift Detection](docs/core/references/drift-detection.md): Scope, goal, and pattern drift signals
 - [Positive Enforcement](docs/core/references/positive-enforcement.md): Prompt design principles
+- [Ecosystem Source Map](docs/core/references/ecosystem-source-map.md): Official runtime and protocol sources plus attribution rules
 
 ## Templates
 
@@ -114,11 +124,20 @@ docs/
   core/
     patterns/     # Universal coordination patterns
     guides/       # Universal operating guidance
-    references/   # Schemas, anti-patterns, and contracts
+    references/   # Schemas, anti-patterns, contracts, and source maps
     examples/     # Worked examples with runtime assumptions
   runtimes/       # Claude Code, Codex, and OpenClaw surface docs
   templates/      # Universal templates plus runtime-specific configs
 ```
+
+## Source-Backed Claims
+
+Runtime details change fast. When this repo makes a claim about a live runtime or protocol, prefer linking the official source rather than freezing brittle product behavior into a universal guide.
+
+Start here:
+
+- [Ecosystem Source Map](docs/core/references/ecosystem-source-map.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Philosophy
 

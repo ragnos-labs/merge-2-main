@@ -26,12 +26,14 @@ coordination.
 - Corrections to inaccurate or outdated information
 - Translations (open an issue first to coordinate)
 - New templates that complement existing patterns
+- New source-backed references to official runtime or protocol docs
 
 ### What We Do Not Accept
 
 - Changes that add tooling-specific dependencies (the framework is tool-agnostic)
 - Marketing or promotional content
 - Docs that require proprietary software to follow
+- Unattributed copy-paste from third-party docs or repos
 
 ## Style Guide
 
@@ -39,6 +41,17 @@ coordination.
 - Markdown with YAML frontmatter
 - Concrete over abstract: show examples, not just rules
 - Every pattern doc should cover both Claude Code and Codex usage where applicable
+
+## Sourcing And Attribution
+
+- Prefer primary sources for runtime-specific claims.
+- Prefer linking and summarizing over copying upstream text.
+- If you adapt an idea from another repo, protocol, or playbook, cite it in the
+  PR and add the durable link near the claim when appropriate.
+- If you copy substantial third-party material, preserve the original notice and
+  license terms exactly as required.
+
+Start with [docs/core/references/ecosystem-source-map.md](docs/core/references/ecosystem-source-map.md).
 
 ## License
 

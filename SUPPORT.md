@@ -4,9 +4,8 @@
 
 - **Issues:** [GitHub Issues](https://github.com/ragnos-labs/merge-2-main/issues) for bugs and feature requests
 - **Discussions:** [GitHub Discussions](https://github.com/ragnos-labs/merge-2-main/discussions) for questions and ideas
+- **Source corrections:** open an issue when a runtime claim needs a fresher official source
 
-## Related Projects
+## Source Map
 
-- [agent-skills](https://github.com/ragnos-labs/agent-skills): Installable skill files for Claude Code
-- [Dr. RAGnos](https://github.com/ragnos-labs/dr-ragnos): AI-powered codebase diagnostic tool
-- [Red Team Swarm](https://github.com/ragnos-labs/red-team-swarm): Automated security testing pipeline
+Start with [docs/core/references/ecosystem-source-map.md](docs/core/references/ecosystem-source-map.md) for official runtime, protocol, and attribution references.

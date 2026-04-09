@@ -14,8 +14,7 @@ working example of what a good AGENTS.md looks like.
 **merge-2-main** is a methodology library for orchestrating 2 to 30+ AI coding
 agents on real software engineering work. It documents four coordination
 patterns, one infrastructure layer, cross-cutting guides, reference schemas,
-and worked examples. Hive Mind is the first complete layer; more layers are
-planned.
+worked examples, and runtime adapters.
 
 The framework is tool-agnostic: the patterns and principles apply regardless of
 whether you are running on Claude Code, Codex, or OpenClaw. Runtime-specific
@@ -106,9 +105,9 @@ Start with `docs/runtimes/codex/overview.md`, then read
 bootstrap flow.
 
 **2. Concurrency limit.**
-Codex defaults to 6 simultaneous agent threads (`max_threads = 6`). Design
-your decomposition to fit within this budget. For topologies larger than 6
-active threads, run in waves: close completed threads before spawning the
+Codex thread budgets are usually tighter than the methodology itself. Design
+your decomposition to fit within the runtime you actually have available. For
+larger topologies, run in waves: close completed threads before spawning the
 next batch. A config template lives at `docs/templates/codex/codex-config.toml`.
 
 **3. CLI vs IDE context loading.**
@@ -141,13 +140,17 @@ target directory so the instruction chain is rebuilt.
 
 The patterns documented here are runtime-agnostic. They have been validated on:
 
-- **Claude Code** (Anthropic): `TeamCreate`, `SendMessage`, `Task` tool,
-  `run_in_background=true`
-- **Codex** (OpenAI): `spawn_agent`, `send_input`, `wait`, `close_agent`
-- **OpenClaw**: session dispatch plus announce-back orchestration
+- **Claude Code** (Anthropic): hookable interactive runtime with native agent
+  coordination primitives
+- **Codex** (OpenAI): sandboxed agent threads with `AGENTS.md`-guided behavior
+- **OpenClaw**: local-first agent runtime with workspace, memory, and channel
+  surfaces
 
 Primitive mappings between runtimes are in `docs/runtimes/` and the short
 compatibility section in `docs/core/patterns/overview.md`.
+
+If you need to verify a runtime-specific claim against the current vendor docs,
+start with `docs/core/references/ecosystem-source-map.md`.
 
 ---
 

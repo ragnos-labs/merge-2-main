@@ -12,7 +12,7 @@ scheduled agent execution rather than an on-demand interactive coding loop.
 Best fit:
 
 - Cron-driven or always-on automation
-- Announce-back workflows where completion is posted to a shared channel
+- Background workflows where completion is posted back to another surface
 - Background orchestration where the caller does not block on every child task
 
 Not the main fit:

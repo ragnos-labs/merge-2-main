@@ -21,9 +21,9 @@ teammates. That makes repo bootstrap quality a first-order concern.
 
 ## CLI vs IDE
 
-- Codex CLI auto-loads `AGENTS.md`
-- Codex IDE users should paste the relevant bootstrap context manually before
-  spawning child agents
+- Local Codex sessions typically auto-discover `AGENTS.md`
+- Other Codex surfaces may require you to paste or inject the relevant
+  bootstrap context manually before spawning child agents
 - If guidance looks stale, restart Codex in the target directory; instruction
   discovery is rebuilt at session start
 
@@ -46,3 +46,6 @@ Templates in this repo:
 
 - `../../templates/codex/codex-config.toml`
 - `../../templates/codex/codex-agents/`
+
+For current product behavior, verify the live runtime docs from
+`../../core/references/ecosystem-source-map.md`.
