@@ -14,7 +14,7 @@ is not done yet.
 
 When this page grows up, it should cover:
 
-- which philosophical assumptions about AI actually change how teams operate
+- which philosophical assumptions about AI change how teams operate
 - where those assumptions affect safety, governance, trust, and accountability
 - which debates are interesting but operationally irrelevant
 - how to separate metaphysics from engineering discipline without pretending

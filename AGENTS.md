@@ -123,7 +123,7 @@ bootstrap flow.
 
 **2. Concurrency limit.**
 Codex thread budgets are usually tighter than the methodology itself. Design
-your decomposition to fit within the runtime you actually have available. For
+your decomposition to fit within the runtime you have available. For
 larger topologies, run in waves: close completed threads before spawning the
 next batch. A config template lives at `docs/templates/codex/codex-config.toml`.
 

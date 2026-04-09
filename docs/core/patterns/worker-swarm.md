@@ -176,7 +176,7 @@ Review checklist for each worker:
 
 - [ ] Output matches the format requested in the prompt
 - [ ] Files changed are within the worker's assigned scope (no scope bleed)
-- [ ] Done criteria are actually met (tests pass, not just "I fixed the tests")
+- [ ] Done criteria are met (tests pass, not just "I fixed the tests")
 - [ ] No unintended side effects in adjacent files
 
 For test-fix workers specifically: run the tests. A worker that reports "all tests fixed" but left the test suite in a broken state is a failure regardless of the narrative.

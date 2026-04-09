@@ -88,7 +88,7 @@ Agents optimize for what is measurable in the immediate context. As a task
 grows longer, the acceptance criteria defined at the top of the prompt become
 less salient than the immediate sub-problem the agent is solving. The agent
 produces something that compiles, passes its own tests, and looks finished
-but diverges from what the sprint actually needed.
+but diverges from what the sprint needed.
 
 Goal drift is more insidious than scope drift because the agent will often
 report success with genuine confidence. There is no error, no conflict, no

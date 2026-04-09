@@ -14,7 +14,7 @@ if you prefer. The point is the same: we like moving fast, but we do not think
 ## Mission
 
 Our mission is to make agentic engineering faster, safer, weirder, and more
-legible for the people actually doing the work.
+legible for the people doing the work.
 
 That means:
 

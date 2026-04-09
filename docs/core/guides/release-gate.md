@@ -16,7 +16,7 @@ Multi-agent coding does not fail only during implementation. It also fails in
 the last mile:
 
 - the wrong files get staged
-- tests were never actually run
+- tests were never run
 - a review happened, but no one fixed the findings
 - a branch is pushed without an audit trail
 - a PR exists, but there is no clear record of what was checked

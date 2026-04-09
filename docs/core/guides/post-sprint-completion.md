@@ -319,7 +319,7 @@ Follow-up: where the ticket or tracking item lives
 
 Append these to a sprint notes file, a project TODO doc, or directly into your
 issue tracker as new tickets. The format does not matter; the requirement is
-that they exist somewhere the team will actually look.
+that they exist somewhere the team will look.
 
 ### Temporary workarounds
 

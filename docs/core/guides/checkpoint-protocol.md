@@ -112,7 +112,7 @@ SIGNAL?     proceed | redirect <instructions> | abort
 
 Field-by-field guidance:
 
-**DONE**: Summarize what agents actually completed, not what was planned.
+**DONE**: Summarize what agents completed, not what was planned.
 Include wave or phase numbers so the reviewer can orient.
 
 **GOAL**: Copy the sprint objective verbatim from the spec. This re-anchors
@@ -247,7 +247,7 @@ Lead action sequence:
 8. On "abort": lead commits current state, opens WIP PR or branch, stops
 ```
 
-The lead must not present the checkpoint until it has actually read worker
+The lead must not present the checkpoint until it has read worker
 outputs and test results. A checkpoint built from agent self-reports is
 worthless.
 

@@ -20,7 +20,7 @@ specification.
 Negative constraints ("do not modify shared files," "do not advance phases
 without approval") are necessary but not sufficient. An agent that receives
 only a list of prohibitions will fill the gap with its best guess at what
-you actually want. That guess is often wrong.
+you want. That guess is often wrong.
 
 **Why this matters.** Language models generate continuations that are
 probable given the context. If the context is full of prohibited actions,

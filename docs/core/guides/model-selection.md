@@ -16,7 +16,7 @@ defaults.
 
 Default to the standard tier. Only escalate when the task genuinely requires it.
 
-This is not a cost-cutting heuristic. It reflects how these models actually perform in agentic
+This is not a cost-cutting heuristic. It reflects how these models perform in agentic
 contexts. The standard tier is capable enough to handle the overwhelming majority of implementation,
 analysis, and synthesis tasks. Reserving the most capable tier for architecture and security review
 means it arrives fresh, focused, and not wasted on file scans.
