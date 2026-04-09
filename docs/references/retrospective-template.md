@@ -85,7 +85,7 @@ date: 2025-11-14
 pattern: Worker Swarm
 tier: n/a
 agent_count: 4
-facilitator: Hunter
+facilitator: Lead
 ---
 
 ## Sprint Summary
@@ -138,8 +138,8 @@ W2 and W3.
 
 | Action                               | Owner   | Deadline gate          |
 |--------------------------------------|---------|------------------------|
-| Add schema ownership field to sprint | Hunter  | Next sprint plan       |
-| Log Stripe SDK test-mode quirks doc  | Hunter  | Before next Stripe work|
+| Add schema ownership field to sprint | Lead  | Next sprint plan       |
+| Log Stripe SDK test-mode quirks doc  | Lead  | Before next Stripe work|
 | Ship deferred refund edge case (W4)  | Agent   | Sprint feat-stripe-v2  |
 ```
 

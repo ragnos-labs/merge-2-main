@@ -1,4 +1,4 @@
-# Merge 2 Main
+# merge-2-main
 
 **Multi-agent coordination framework for Claude Code and Codex.**
 
@@ -128,4 +128,4 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ---
 
-Built by [RAGnos Labs](https://github.com/ragnos-labs).
+Built by [RAGnos Labs](https://github.com/ragnos-labs/merge-2-main).

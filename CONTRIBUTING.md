@@ -1,4 +1,4 @@
-# Contributing to Hive Mind
+# Contributing to merge-2-main
 
 Thank you for your interest in contributing. This is a documentation-only repository:
 no executable code, just architectural patterns, guides, and templates for multi-agent
@@ -8,7 +8,7 @@ coordination.
 
 ### Reporting Issues
 
-- Use [GitHub Issues](https://github.com/ragnos-labs/hive-mind/issues) for bugs, unclear docs, or suggestions
+- Use [GitHub Issues](https://github.com/ragnos-labs/merge-2-main/issues) for bugs, unclear docs, or suggestions
 - Include which document is affected and what is confusing or incorrect
 
 ### Submitting Changes

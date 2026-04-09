@@ -7,6 +7,10 @@ description: "Decision guide for the four multi-agent execution patterns (Patchw
 
 This document describes the four execution patterns and one infrastructure layer available in this framework. Each pattern is a distinct workflow with its own coordination model, agent count range, and cost profile. Use this guide to select the right pattern for a given task before spawning any agents.
 
+**Scope note:** Hive Mind is one orchestration layer in a growing collection. This repo will expand with additional patterns and runtime adapters as the methodology matures.
+
+**Runtime surfaces:** These patterns run on Claude Code, Codex, and OpenClaw. See the [Runtime Surfaces](#runtime-surfaces-claude-code-codex-and-openclaw) section for primitive mappings and per-surface constraints. Codex users: place `AGENTS.md` at your repo root before running any agent. It is the universal config entry point for Codex sessions.
+
 ## Terminology
 
 These five terms are reserved. Do not use them interchangeably or as synonyms.
@@ -230,25 +234,37 @@ The guiding principle: choose the simplest pattern that fits the task. Patchwork
 
 ---
 
-## Runtime Surfaces: Claude Code and Codex
+## Runtime Surfaces: Claude Code, Codex, and OpenClaw
 
-All four patterns run on both Claude Code and Codex, though the coordination primitives differ for Hive Mind.
+All four patterns run on Claude Code, Codex, and OpenClaw, though the coordination primitives differ for Hive Mind.
 
 **Claude Code** uses built-in team management tools: `TeamCreate`, `TaskCreate`, `TaskList`, and `SendMessage` for Hive Mind. Patchwork, Worker Swarm, and Research Swarm use the `Task` tool to spawn background agents.
 
-**Codex** (ChatGPT Pro with multi-agent enabled) uses native runtime tools: `spawn_agent`, `send_input`, `wait`, and `close_agent`. The pattern topology is identical to Claude Code; only the primitives change. Role configurations live in `.codex/agents/` and are ignored by Claude Code.
+**Codex** (ChatGPT Pro with multi-agent enabled) uses native runtime tools: `spawn_agent`, `send_input`, `wait`, and `close_agent`. The pattern topology is identical to Claude Code; only the primitives change. Role configurations live in `.codex/agents/` and are ignored by Claude Code. Place `AGENTS.md` at your repo root: it is the universal config entry point for all Codex sessions.
+
+**OpenClaw** dispatches agents via `sessions_spawn` and uses an announce-back model (agents post results to a shared channel on completion rather than blocking the caller). Supports up to 8 concurrent agents. Best suited for ambient and cron-driven workflows. Bedrock-only: all model calls route through AWS Bedrock.
 
 ```
-Claude Code primitive    Codex equivalent
------------------------  ----------------------------
-TeamCreate               Root session + spawn_agent
-TaskCreate / TaskList    External run ledger (JSON)
-SendMessage              send_input / wait
-Task (spawn teammate)    spawn_agent(role: "lead")
-Task (spawn bee)         spawn_agent(role: "worker")
+Claude Code primitive    Codex equivalent             OpenClaw equivalent
+-----------------------  ---------------------------  ---------------------------
+TeamCreate               Root session + spawn_agent   sessions_spawn (team setup)
+TaskCreate / TaskList    External run ledger (JSON)   External run ledger (JSON)
+SendMessage              send_input / wait            Announce-back channel post
+Task (spawn teammate)    spawn_agent(role: "lead")    sessions_spawn(role: "lead")
+Task (spawn bee)         spawn_agent(role: "worker")  sessions_spawn(role: "worker")
 ```
 
-Patchwork and Worker Swarm work identically on both surfaces. Research Swarm manifest execution is surface-agnostic (the manifest format is the same; the agent runner adapts). Hive Mind has a dedicated Codex adapter because the messaging and task-list primitives differ substantially.
+```
++--------------+-------------------+----------------+---------------------------+
+| Surface      | Dispatch          | Concurrency    | Best For                  |
++--------------+-------------------+----------------+---------------------------+
+| Claude Code  | Task tool         | Session limit  | Interactive coding runs   |
+| Codex        | spawn_agent       | 6 threads      | Long-horizon agentic loops|
+| OpenClaw     | sessions_spawn    | 8 agents       | Ambient / cron workflows  |
++--------------+-------------------+----------------+---------------------------+
+```
+
+Patchwork and Worker Swarm work identically across all three surfaces. Research Swarm manifest execution is surface-agnostic (the manifest format is the same; the agent runner adapts). Hive Mind has a dedicated Codex adapter because the messaging and task-list primitives differ substantially. OpenClaw's announce-back model maps naturally to the Research Swarm wave-gate structure.
 
 Full Codex reference: [./codex-runtime.md](./codex-runtime.md)
 

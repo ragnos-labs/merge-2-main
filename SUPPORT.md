@@ -2,8 +2,8 @@
 
 ## Getting Help
 
-- **Issues:** [GitHub Issues](https://github.com/ragnos-labs/hive-mind/issues) for bugs and feature requests
-- **Discussions:** [GitHub Discussions](https://github.com/ragnos-labs/hive-mind/discussions) for questions and ideas
+- **Issues:** [GitHub Issues](https://github.com/ragnos-labs/merge-2-main/issues) for bugs and feature requests
+- **Discussions:** [GitHub Discussions](https://github.com/ragnos-labs/merge-2-main/discussions) for questions and ideas
 
 ## Related Projects
 

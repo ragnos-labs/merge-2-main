@@ -180,12 +180,17 @@ SCOPE: <directory or file pattern to focus on>
 
 CONTEXT: <background from prior waves, if any>
 
-TOOLS AVAILABLE: Glob, Grep, Read
+TOOLS AVAILABLE:
+- Claude Code: Glob, Grep, Read (dedicated file tools)
+- Codex: standard file operations (read_file, search_files, list_directory or equivalent native tools)
+- OpenClaw: plugin tools registered via `api.registerTool()` - use whatever file tools are registered
+
+Note: Tool names are runtime-specific. Use the file search and read capabilities native to your runtime.
 
 INSTRUCTIONS:
-1. Use Glob to locate relevant files
-2. Use Grep to find occurrences of key patterns or symbols
-3. Use Read to examine specific files in detail
+1. Locate relevant files using the file search tool for your runtime
+2. Find occurrences of key patterns or symbols using the search tool for your runtime
+3. Examine specific files in detail using the file read tool for your runtime
 4. Compile findings as structured bullets with file paths and line references
 
 OUTPUT FORMAT:
@@ -574,6 +579,22 @@ the main session:
 The manifest, wave structure, cross-verification gate, and Synthesis Report format are
 the same regardless of platform. Codex operators run the same process with sequential
 tool calls substituting for parallel agent spawning.
+
+> **Codex: wave gating is manual.** Codex has no native `blockedBy` enforcement. Run all
+> Wave 1 agents (or tool calls), review their outputs, then initiate Wave 2. The manifest
+> serves as your checklist: mark each question complete before advancing.
+
+---
+
+## OpenClaw Usage
+
+In OpenClaw, `sessions_spawn` can run Wave 1 agents in parallel (up to 8 concurrent).
+Each agent is a session assigned to one manifest question. Wave advancement still requires
+operator review before spawning the next wave.
+
+OpenClaw uses an announce-back model: each agent posts its synthesis file path to the
+orchestrator channel on completion. The operator collects these paths, reviews all wave
+outputs, then triggers the next wave.
 
 ---
 

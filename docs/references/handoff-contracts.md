@@ -45,6 +45,13 @@ Field notes:
 - `constraints`: optional bounds the receiver must respect. Common keys:
   `scope_files`, `deadline_phase`, `model_floor`. Omit if not needed.
 
+> **`model_tier` resolution**: shorthand tier strings (`"sonnet"`, `"opus"`,
+> `"haiku"`) used in constraints or task payloads must be resolved to concrete
+> model IDs at runtime before being passed to any LLM call. Tier names are
+> human-readable aliases only. See
+> [Model Selection Guide](../guides/model-selection.md) for the current
+> mapping from tier names to model IDs.
+
 ---
 
 ## Contract Types
@@ -248,6 +255,51 @@ it after the fact.
 
 The lead responds with either approval (freeform or a new `task_dispatch` with
 expanded scope) or a rejection with alternative instructions.
+
+---
+
+## Contract Delivery Methods
+
+Contracts are JSON objects. How they move between agents depends on the
+runtime. Four delivery methods cover every supported pattern.
+
+### 1. File drop (recommended default)
+
+Write the contract JSON to a file at:
+
+```
+tmp/<runtime>-run/contracts/<agent-id>-<contract-type>.json
+```
+
+Example path: `tmp/sprint-2026-04-08-run/contracts/worker-auth-task_complete.json`
+
+This is the most reliable method. The file survives context resets, can be
+read by any agent with filesystem access, and leaves an auditable trail.
+Use this as the default unless the runtime has no shared filesystem.
+
+### 2. Task prompt injection (dispatch only)
+
+Paste the contract JSON block directly into the spawned agent's task prompt.
+This works for orchestrator-to-worker dispatch: the orchestrator knows what
+it is sending before the worker exists. Workers cannot use this method to
+respond back to an orchestrator already in context.
+
+### 3. AGENTS.md mandate (async, all runtimes)
+
+Instruct workers in `AGENTS.md` to emit a `task_complete` contract as the
+final output of their session. Workers read `AGENTS.md` at startup, so this
+mandate travels with the repo and does not require per-task instruction.
+This method works across all runtimes including async batch runners where
+the orchestrator and worker never share a live channel.
+
+### 4. OpenClaw announce-back
+
+The `sessions_spawn` tool in OpenClaw returns a `runId`. When the spawned
+session completes, the result is posted back to the orchestrator's channel.
+The contract JSON should be the content of that response: the orchestrator
+reads the response body, parses the JSON contract, and uses it to advance
+the sprint state. This method is native to the OpenClaw runtime and requires
+no file system writes.
 
 ---
 

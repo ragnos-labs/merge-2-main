@@ -7,6 +7,10 @@ description: Five questions to pick the right multi-agent pattern in under 60 se
 
 Five questions. Under 60 seconds. Pick your pattern and start.
 
+> **Codex users:** Codex has a 6-thread concurrency limit. Factor this into your decomposition before answering Q3. If your task requires more than 6 parallel agents, plan a phased wave structure rather than a single fan-out.
+>
+> **Codex users:** Place `AGENTS.md` at your repo root before running any agent. It is the universal config entry point for Codex sessions.
+
 ---
 
 ## The Decision Tree
@@ -15,30 +19,43 @@ Five questions. Under 60 seconds. Pick your pattern and start.
 Q1: How many files or units of work are changing?
 |
 +-- Fewer than 10, mechanical changes --> PATCHWORK (done)
+|     Start with: docs/patterns/patchwork.md
 |
 +-- 10 or more --> continue to Q2
 |
 Q2: Are the changes independent of each other?
 |
 +-- Yes, they can run in parallel --> WORKER SWARM (done)
+|     Start with: docs/patterns/worker-swarm.md
+|     Codex users: then read docs/patterns/codex-runtime.md
 |
 +-- No, or unclear --> continue to Q3
 |
 Q3: Is the primary goal discovery/research, or execution/building?
 |
 +-- Discovery (scan, audit, analyze, find what needs fixing) --> RESEARCH SWARM (done)
+|     Start with: docs/patterns/research-swarm.md
+|     Codex users: then read docs/patterns/codex-runtime.md
 |
 +-- Execution (I know what needs building) --> continue to Q4
 |
 Q4: How many independent workstreams does the work require?
+|   NOTE: "Autonomous" here means agents coordinate via messaging and a shared
+|   task list without the lead writing every prompt. If the lead can write all
+|   prompts upfront, this is still Worker Swarm territory.
 |
 +-- One workstream, complex autonomous build --> HIVE MIND 2-TIER (done)
+|     Start with: docs/patterns/hive-mind-2tier.md
+|     Codex users: then read docs/patterns/codex-runtime.md
 |
 +-- Two or more workstreams, each needing its own lead --> HIVE MIND 3-TIER (done)
+|     Start with: docs/patterns/hive-mind-3tier.md
+|     Codex users: then read docs/patterns/codex-runtime.md
 |
 Q5: Do parallel agents need file-level git isolation?
 |
 +-- Yes --> Add WORKTREE SPRINT layer to whichever pattern above you chose
+|     Start with: docs/patterns/worktree-sprint.md
 |
 +-- No --> Run the pattern directly
 ```
@@ -55,23 +72,32 @@ at the first match.
 
 **1. Fewer than 10 mechanical changes?**
 Yes: use Patchwork. Run them yourself, no sub-agents needed.
+Start with: `docs/patterns/patchwork.md`
 
 **2. Independent parallel work across 4 to 12 agents?**
 Yes: use Worker Swarm. The lead writes every agent prompt.
+Start with: `docs/patterns/worker-swarm.md` | Codex users: then read `docs/patterns/codex-runtime.md`
 
 **3. Need to discover what is broken or what exists before building?**
 Yes: use Research Swarm. Agents scan and produce a findings manifest; a Worker
 Swarm or Hive Mind implements from those findings.
+Start with: `docs/patterns/research-swarm.md` | Codex users: then read `docs/patterns/codex-runtime.md`
 
 **4. One complex workstream requiring autonomous coordination?**
+"Autonomous coordination" means agents claim tasks from a shared list and message
+each other without the lead writing every prompt. If the lead can write all prompts
+upfront, use Worker Swarm instead.
 Yes: use Hive Mind 2-tier. One lead, 3 to 8 teammates, no bee layer.
+Start with: `docs/patterns/hive-mind-2tier.md` | Codex users: then read `docs/patterns/codex-runtime.md`
 
 **5. Multiple independent workstreams, each needing its own lead?**
 Yes: use Hive Mind 3-tier. An orchestrator coordinates 2 or more leads, each
 running their own bee agents.
+Start with: `docs/patterns/hive-mind-3tier.md` | Codex users: then read `docs/patterns/codex-runtime.md`
 
 **+. Any pattern with parallel agents that must not conflict on files?**
 Yes: wrap the chosen pattern in a Worktree Sprint for git-level isolation.
+Start with: `docs/patterns/worktree-sprint.md`
 
 ---
 

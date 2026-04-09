@@ -126,6 +126,12 @@ Sending to workers:
 Format all messages to workers as plain text. Do not include markdown
 headers in inter-agent messages. One message per signal.
 
+Note: the shorthand signals above (STATUS:, BLOCKER:, DONE:, PHASE_2_START:,
+etc.) are for human-readable log scanning. For programmatic consumption,
+emit the full JSON contract (see
+[Handoff Contracts](../references/handoff-contracts.md)). Both formats can
+coexist: emit the JSON contract first, then the plain-text summary line.
+
 ---
 
 ## File Ownership

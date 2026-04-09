@@ -54,6 +54,65 @@ differently.
 
 ---
 
+## AGENTS.md: Universal Configuration Entry Point
+
+`AGENTS.md` at the repo root is the primary mechanism for injecting persistent
+context into every Codex agent. Think of it as the bootstrap configuration that
+travels with each spawn.
+
+**CLI vs IDE loading behavior:**
+
+- **Codex CLI** auto-loads `AGENTS.md` at session start. Every spawned sub-agent
+  receives its contents automatically. No manual injection needed.
+- **Codex IDE** does NOT auto-load `AGENTS.md`. IDE users must manually paste
+  the XML context block into the conversation before spawning agents. If you
+  skip this step, sub-agents start with no project context.
+
+**What sub-agents receive at spawn time:**
+
+Sub-agents receive exactly two things: (a) the contents of `AGENTS.md` and
+(b) the task prompt you pass to `spawn_agent`. They do NOT inherit the
+orchestrator's conversation history, its reasoning state, or any
+`send_input` messages sent to other agents. Every sub-agent starts blank
+except for `AGENTS.md` and its own task prompt.
+
+**What to put in AGENTS.md:**
+
+A useful `AGENTS.md` covers:
+
+- Project goal and architectural overview (2-3 sentences)
+- Repo layout: which directories own what
+- Coding conventions and style rules
+- Secret / credential handling rules
+- Branch and commit conventions
+- Which files are off-limits or read-only
+- Test commands to use for verification
+
+Keep it under 400 lines. Long `AGENTS.md` files consume context budget that
+agents need for actual work.
+
+**Inline file ownership maps in task prompts:**
+
+For Hive Mind runs, embed a file ownership map directly in each lead's task
+prompt rather than relying solely on `AGENTS.md`. This prevents leads from
+accidentally editing each other's files even if they misread the global config:
+
+```json
+{
+  "file_ownership": {
+    "owned": ["src/api/auth/**", "tests/api/auth/**"],
+    "read_only": ["src/api/middleware/**", "config/"],
+    "off_limits": ["src/api/billing/**", "src/admin/**"]
+  }
+}
+```
+
+Include this block in every `task_dispatch` and workstream decomposition
+handoff. Explicit ownership in the task prompt is more reliable than global
+declarations alone.
+
+---
+
 ## Enabling Multi-Agent Mode
 
 ```toml
@@ -69,6 +128,53 @@ job_max_runtime_seconds = 3600
 
 Or toggle it interactively: type `/experimental` inside a Codex session and
 select "Multi-agents."
+
+**Thread budget and the 5-hour rolling compute window:**
+
+Codex enforces a 5-hour rolling compute window per session. All spawned agents
+and the orchestrator itself count against this window. For large Hive Mind runs,
+structure your decomposition so the full run completes within this budget:
+
+- Limit each phase to 3-4 concurrent leads (leaving headroom under `max_threads = 6`).
+- Close completed threads promptly: lingering idle threads consume both the
+  thread budget and the compute window.
+- For runs that approach the 5-hour limit, write checkpoint context to
+  `checkpoints.json` at each phase gate so the run can be resumed in a new
+  session if needed.
+
+If a run must span multiple sessions, treat the checkpoint file as the
+hand-off artifact and re-spawn the orchestrator with it at the start of the
+next session.
+
+---
+
+## Session Start Checklist
+
+Run these checks before spawning any agents. Catching misconfigurations here
+prevents wasted compute budget on agents that start with wrong context.
+
+1. **Verify `AGENTS.md` at repo root.** Confirm the file exists and contains
+   current project context. If you are using the Codex IDE (not CLI), copy the
+   full `AGENTS.md` content into an XML block and paste it into the session
+   before proceeding.
+
+2. **Check thread budget.** Review `max_threads` in `.codex/config.toml`.
+   Default is 6. Count how many agents your first wave needs. If the wave
+   exceeds the thread limit, plan the stagger before spawning.
+
+3. **Decompose tasks to fit within the compute window.** Estimate how many
+   phases your run requires. Structure the decomposition so all phases complete
+   within the 5-hour rolling compute window. If the run is too large, split it
+   into checkpointed sessions with explicit hand-off artifacts.
+
+4. **Set role via `.codex/agents/<role>.toml`.** Confirm the role config files
+   exist for every role you will spawn (lead, worker, explorer, verifier). If
+   a role file is missing, the agent falls back to default settings, which may
+   use wrong reasoning effort or sandbox mode for the task.
+
+5. **Initialize the run ledger.** Create `.codex/runtime/run.json` and
+   `workstreams.json` before spawning. An absent ledger means no recovery path
+   if the orchestrator session is interrupted mid-run.
 
 ---
 
@@ -118,6 +224,43 @@ acceptance criteria. Return a structured verdict:
 Never edit files. If tests fail, report exactly what failed and why.
 """
 ```
+
+---
+
+## Adapting Patchwork for Codex
+
+Patchwork is a single-session baseline: one agent, no spawning, no
+orchestration overhead. Use it when the change is fewer than 10 mechanical
+fixes that do not require parallel investigation.
+
+**When Patchwork is right:**
+
+- Rename a function or variable across a bounded file set.
+- Fix a lint rule violation in under 5 files.
+- Update a config value that appears in known locations.
+- Apply a boilerplate change (add a field, update an import) to a short list
+  of files.
+
+**How it works in Codex:**
+
+No `spawn_agent` calls. The root Codex session is the only agent. Read
+`AGENTS.md`, understand the task, make the changes, run the test command,
+report done. If you find yourself wanting to parallelize investigation or
+split work between agents, the task has grown past Patchwork scope and should
+be re-scoped as a Worker Swarm.
+
+**Session flow:**
+
+1. Confirm the task fits Patchwork scope (< 10 mechanical fixes, no
+   architectural decisions).
+2. Read relevant files.
+3. Make all changes in sequence.
+4. Run the test command.
+5. Report result. No handoffs, no run ledger, no verifier spawn needed.
+
+**No run ledger required.** For Patchwork runs, the ledger and event log are
+unnecessary overhead. A single commit message summarizing what changed is
+sufficient.
 
 ---
 
@@ -222,6 +365,47 @@ implementation work starts. In Codex, explorers run with `sandbox_mode =
 
 The orchestrator merges all explorer outputs into a single manifest and then
 proceeds to Worker Swarm or Hive Mind decomposition.
+
+### Wave batching with spawn_agents_on_csv
+
+`spawn_agents_on_csv` is a Codex-native primitive for launching multiple agents
+in one call using a CSV-formatted task list. It is the direct Codex equivalent
+of fanning out a wave in the Research Swarm model.
+
+**When to use it vs manual sequential spawning:**
+
+- Use `spawn_agents_on_csv` when you have 3+ independent tasks ready at the
+  same time and want to start all of them in a single orchestrator turn. This
+  avoids the round-trip overhead of calling `spawn_agent` N times and waiting
+  between each.
+- Use manual `spawn_agent` + `wait` when tasks have heterogeneous configs
+  (different roles, sandbox modes, or reasoning efforts) that cannot be
+  expressed uniformly in a CSV row, or when you need to inspect each result
+  before spawning the next.
+
+**CSV format:**
+
+```
+role,task_json
+explorer,{"type":"explore_request","domain":"auth layer","scope":["src/api/auth/**"]}
+explorer,{"type":"explore_request","domain":"data layer","scope":["src/db/**"]}
+explorer,{"type":"explore_request","domain":"API surface","scope":["src/api/routes/**"]}
+```
+
+**Mapping to Research Swarm waves:**
+
+The Research Swarm model defines two waves: Wave 1 (parallel discovery) and
+Wave 2 (implementation, gated on Wave 1 results). `spawn_agents_on_csv`
+implements Wave 1 exactly: one CSV call launches all explorers in parallel,
+and a single `wait_all` collects all results before the orchestrator builds
+the manifest. Wave 2 (Worker Swarm) then starts from that manifest.
+
+```
+spawn_agents_on_csv(explorer_csv)   # Wave 1: all explorers start together
+wait_all(wave_1_thread_ids)         # block until all Wave 1 results arrive
+build_manifest(results)             # orchestrator synthesizes
+spawn_agents_on_csv(worker_csv)     # Wave 2: workers start from manifest
+```
 
 ---
 
@@ -472,6 +656,22 @@ Produce this JSON before spawning any agents:
 Paste these into the Codex session that will play each role. Replace
 placeholder values with the actual decomposition or task data.
 
+**Note on tool names:** The tool names `Glob`, `Grep`, `Read`, `Edit`, and
+`Write` are Claude Code-specific. They do not exist in Codex agents. When
+writing task prompts for Codex workers or explorers, use runtime-portable
+formulations instead:
+
+| Claude Code phrasing              | Codex-portable alternative                        |
+|-----------------------------------|---------------------------------------------------|
+| "Use Grep to find all usages of X" | "Search for all usages of X in the codebase"     |
+| "Use Glob to find *.ts files"      | "Find all TypeScript files under src/"           |
+| "Use Read to inspect the file"     | "Read the file and examine its contents"         |
+| "Use Edit to update the function"  | "Update the function in the file"                |
+
+The Codex agent will use whatever file operation primitives its sandbox
+provides. Naming Claude Code tools explicitly in Codex prompts causes the
+agent to report a tool-not-found error or silently ignore the instruction.
+
 ### Orchestrator template
 
 ```xml
@@ -608,6 +808,40 @@ Instructions:
 If pass is false, list exactly what failed and why in "gaps."
 </hive_mind_verifier>
 ```
+
+---
+
+## Responses API (Programmatic Callers)
+
+If you drive Codex agents programmatically via the Responses API rather than
+the CLI or IDE, three fields matter for multi-agent runs.
+
+**`phase` field:**
+
+Pass `phase` in the request body to indicate which phase of a Hive Mind run
+the call belongs to. The Responses API does not enforce phase gates on its
+own; you must track phase state in your run ledger and pass the correct `phase`
+value so downstream agents know their context. Mismatch between the ledger
+phase and the request `phase` is a common source of duplicate or out-of-order
+work.
+
+**`previous_response_id` for conversation continuity:**
+
+Codex agents spawned via the Responses API are stateless by default. To
+maintain conversation continuity within a durable lead agent, pass
+`previous_response_id` set to the `id` from the prior response. This chains
+the turns together so the agent retains its prior reasoning. Omitting this
+field restarts the agent from a blank context, equivalent to re-spawning with
+no checkpoint.
+
+**Context compaction:**
+
+Long-running leads accumulate large contexts. The Responses API does not
+automatically compact. For leads that span many worker cycles, periodically
+summarize the conversation state into a structured checkpoint (using the
+`checkpoints.json` format), close the lead, and re-spawn with the checkpoint
+as the opening context rather than the full prior conversation. This keeps
+token costs predictable and avoids context-window truncation on extended runs.
 
 ---
 
