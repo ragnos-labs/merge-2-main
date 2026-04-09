@@ -11,6 +11,41 @@ Call it a manifesto if you want. Call it a lab manual with worse sleep habits
 if you prefer. The point is the same: we like moving fast, but we do not think
 "fast" means "sloppy and impossible to audit later."
 
+## Mission
+
+Our mission is to make agentic engineering faster, safer, weirder, and more
+legible for the people actually doing the work.
+
+That means:
+
+- publish methods that help real teams move
+- keep governance, observability, and security in the loop
+- make public material useful enough to raise the floor for everyone
+- leave room for experimentation, discovery, and the occasional productive
+  argument with reality
+
+We are not trying to make the work less strange. We are trying to make the
+strange parts usable.
+
+## Commitment To The Community
+
+We believe public uplift matters.
+
+That shows up here as a few simple commitments:
+
+- share methodology when it can help without leaking private leverage
+- credit upstream ideas instead of pretending we invented the internet
+- keep this repo welcoming to people across stacks, backgrounds, and levels of
+  formality
+- leave room for absurdist humor without turning the space hostile, exclusionary,
+  or smug
+- build a place where people can challenge assumptions, contribute patterns,
+  and call out weak claims
+
+Safe space, in practice, means a place where people can learn, disagree, and
+show up as themselves without getting punished for not sounding like the loudest
+guy in the room.
+
 ## What We Optimize For
 
 We care about three things enough to keep repeating them:
@@ -20,6 +55,32 @@ We care about three things enough to keep repeating them:
 - weirdness without losing reviewability
 
 The mad-scientist part is real. So is the paper trail.
+
+## What The Hell Does RAGnos Mean
+
+It is a nerdy mashup, not a pristine museum-grade etymology.
+
+The `RAG` part is the obvious one: retrieval-augmented generation, the
+engineering reality a lot of this work grew out of.
+
+The `nos` part is more aspirational and more mischievous:
+
+- a nod to `gnosis`, or knowing
+- a sideways wink at `agnostic`, because we want the methods to be more stack-
+  agnostic than our actual day-to-day preferences sometimes are
+- a reminder that discovery matters, even when we are clearly dragging our own
+  preferred tools into the lab with us
+
+So the name points in a few directions at once:
+
+- nerdy enough to admit where it came from
+- ideological enough to care about discovery and knowledge
+- aspirational enough to reach for tool and stack agnosticism
+
+Do we have our own stack preferences and begrudging lock-ins? Obviously.
+
+The aspiration still counts. The joke is that we know better than to pretend we
+are fully above our own habits, metaphysics, or vendor gravity.
 
 ## The Working Rules
 
