@@ -8,7 +8,8 @@ coordination.
 
 ### Reporting Issues
 
-- Use [GitHub Issues](https://github.com/ragnos-labs/merge-2-main/issues) for bugs, unclear docs, or suggestions
+- Use [GitHub Issues](https://github.com/ragnos-labs/merge-2-main/issues)
+  for bugs, unclear docs, or suggestions
 - Include which document is affected and what is confusing or incorrect
 
 ### Submitting Changes
@@ -40,7 +41,32 @@ coordination.
 - ASCII only (no unicode em dashes, curly quotes, or special characters)
 - Markdown with YAML frontmatter
 - Concrete over abstract: show examples, not just rules
-- Every pattern doc should cover both Claude Code and Codex usage where applicable
+- Every pattern doc should cover both Claude Code and Codex usage where
+  applicable
+
+## Voice Boundaries
+
+This repo allows a small amount of personality, but not everywhere.
+
+Use a clear tone split:
+
+- **Business surfaces**: guides, references, templates, examples, and any doc
+  making durable methodology claims should stay direct, technical, and low-sass
+- **Border surfaces**: the root README, ecosystem pages, placeholder docs, and
+  "work in progress" stubs may carry light commentary, dry humor, or a little
+  Mr. CLI energy
+
+Rules:
+
+- keep humor brief and intentional
+- do not let jokes obscure instructions, claims, or warnings
+- do not turn core methodology docs into character performance
+- if a doc is teaching process, review, safety, or governance, write it clean
+  and sober
+
+If you use humor for border surfaces, prefer the repo's current dry edge over
+random internet snark. The reference energy is closer to "useful operator with a
+raised eyebrow" than "bit account with a keyboard."
 
 ## Sourcing And Attribution
 
@@ -55,4 +81,5 @@ Start with [docs/core/references/ecosystem-source-map.md](docs/core/references/e
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the Apache 2.0 License.
+By contributing, you agree that your contributions will be licensed under the
+Apache 2.0 License.
