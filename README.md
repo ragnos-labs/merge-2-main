@@ -27,7 +27,7 @@ You get:
 
 Works with [Claude Code](https://code.claude.com/docs/en), [OpenAI
 Codex](https://openai.com/index/introducing-codex/), and
-[OpenClaw](https://openclaw.im/docs/start/setup). The methodology is
+[OpenClaw](https://openclaw.im/docs/start/setup). Our methodologies strive to be
 tool-agnostic; runtime specifics live in dedicated runtime docs.
 
 Canonical docs live under `docs/core`, `docs/runtimes`, and `docs/templates`.
