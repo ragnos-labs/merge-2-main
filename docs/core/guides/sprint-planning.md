@@ -171,7 +171,7 @@ workstreams:
 ```
 
 Draw the graph before finalizing the plan. If you find that every workstream depends on
-every other, the boundaries are wrong: the work is not actually parallel. Redesign the
+every other, the boundaries are wrong: the work is not parallel. Redesign the
 interfaces so workstreams can proceed independently.
 
 Common dependency patterns:

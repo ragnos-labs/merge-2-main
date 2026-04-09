@@ -6,7 +6,7 @@ description: A runtime-agnostic pattern for turning scattered checks into one re
 ## Unified Audit Pipeline
 
 A good audit pipeline does not just run scanners. It produces a reviewable
-finding set, a repair path, and a clear statement of what was actually checked.
+finding set, a repair path, and a clear statement of what was checked.
 
 ## Why This Exists
 
@@ -20,7 +20,7 @@ Agent-heavy teams tend to accumulate half a dozen overlapping review motions:
 - optional runtime probes
 
 When these stay disconnected, the same branch gets reviewed three times and no
-one can say what the final verdict actually was.
+one can say what the final verdict was.
 
 The fix is not "more scanners." The fix is one audit contract that absorbs
 multiple signals into one result.
@@ -118,4 +118,4 @@ A useful audit run ends with:
 - what still blocks merge or release
 
 If the result is "clean," the report should still say which surfaces were
-actually checked.
+checked.

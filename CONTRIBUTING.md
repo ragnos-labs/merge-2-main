@@ -44,6 +44,15 @@ coordination.
 - Every pattern doc should cover both Claude Code and Codex usage where
   applicable
 
+## Documentation Anti-Patterns
+
+Avoid filler emphasis words that do not add meaning.
+
+- words like `actually`, `obviously`, `clearly`, and similar throat-clearing
+  often read like AI tells or weak persuasion
+- if the sentence still works after removing the word, remove it
+- if you need emphasis, add evidence or make the claim more precise instead
+
 ## Local Validation
 
 This repo ships a minimal local gate so contributors can match CI before they
