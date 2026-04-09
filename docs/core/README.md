@@ -3,7 +3,7 @@ title: Core Methodology Overview
 description: Landing page for the canonical multi-agent methodology docs.
 ---
 
-# Core Methodology Overview
+## Core Methodology Overview
 
 `docs/core` is the canonical methodology surface for this repo.
 
@@ -42,11 +42,16 @@ Execution topologies and when to use them:
 Operating guidance that applies across patterns:
 
 - [Decision Tree](./guides/decision-tree.md)
+- [Unified Audit Pipeline](./guides/unified-audit-pipeline.md)
 - [Model Selection](./guides/model-selection.md)
+- [Behavior Design](./guides/behavior-design.md)
 - [Sprint Planning](./guides/sprint-planning.md)
 - [TDD Integration](./guides/tdd-integration.md)
 - [Checkpoint Protocol](./guides/checkpoint-protocol.md)
+- [Trigger-Based Docs Sync](./guides/trigger-based-docs-sync.md)
 - [Release Gate](./guides/release-gate.md)
+- [Ship Rerun Semantics](./guides/ship-rerun-semantics.md)
+- [Meta-Log Gates](./guides/meta-log-gates.md)
 - [Sprint Artifacts](./guides/sprint-artifacts.md)
 - [Post-Sprint Completion](./guides/post-sprint-completion.md)
 - [Scribe](./guides/scribe.md)
@@ -57,11 +62,14 @@ Reusable contracts, schemas, and source maps:
 
 - [Anti-Patterns](./references/anti-patterns.md)
 - [Handoff Contracts](./references/handoff-contracts.md)
+- [Verification Discipline](./references/verification-discipline.md)
+- [Instruction Hygiene](./references/instruction-hygiene.md)
 - [Research Manifest Schema](./references/research-manifest-schema.md)
 - [TDD Contracts Template](./references/tdd-contracts-template.md)
 - [Retrospective Template](./references/retrospective-template.md)
 - [Drift Detection](./references/drift-detection.md)
 - [Positive Enforcement](./references/positive-enforcement.md)
+- [Security Tooling Starting Points](./references/security-tooling-starting-points.md)
 - [Ecosystem Source Map](./references/ecosystem-source-map.md)
 
 ### Examples
