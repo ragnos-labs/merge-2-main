@@ -292,6 +292,20 @@ schedules.
 correction loops, but only when the process underneath stays reviewable. See
 [Behavior Design](docs/core/guides/behavior-design.md).
 
+## Emerging Topics
+
+Some lanes are intentionally stubbed because they matter, but they are not yet
+ready to pretend they are finished.
+
+- [AI Philosophy And Implications](docs/core/references/ai-philosophy-and-implications.md):
+  placeholder for the bigger questions and operating consequences
+- [Discovery Vs Invention](docs/core/references/discovery-vs-invention.md):
+  placeholder for the scientific and philosophical debate around AI
+- [Character Layer](docs/core/guides/character-layer.md): placeholder for the
+  higher-level personality surface that sits on top of behavior design
+
+Call it an orderly mess, or at least an intentional one.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. This is a

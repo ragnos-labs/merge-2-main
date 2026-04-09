@@ -71,6 +71,14 @@ Reusable contracts, schemas, and source maps:
 - [Positive Enforcement](./references/positive-enforcement.md)
 - [Security Tooling Starting Points](./references/security-tooling-starting-points.md)
 - [Ecosystem Source Map](./references/ecosystem-source-map.md)
+- [AI Philosophy And Implications](./references/ai-philosophy-and-implications.md)
+- [Discovery Vs Invention](./references/discovery-vs-invention.md)
+
+### Emerging Topics
+
+Deliberate placeholders for topics that matter but are not done yet:
+
+- [Character Layer](./guides/character-layer.md)
 
 ### Examples
 
