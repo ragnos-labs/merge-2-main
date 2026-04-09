@@ -1,14 +1,14 @@
 ---
 title: "Hive Mind: 2-Tier Pattern"
-description: "Lead agent coordinates 3-8 persistent Teammate agents through a 9-phase lifecycle using TeamCreate and SendMessage. Use when a single complex workstream needs ongoing coordination, bidirectional communication, and phase-gated progression."
+description: "Lead agent coordinates 3-8 persistent teammate agents through a 9-phase lifecycle. Use when a single complex workstream needs ongoing coordination, bidirectional communication, and phase-gated progression."
 ---
 
 # Hive Mind: 2-Tier Pattern
 
-The 2-tier Hive Mind is the core coordination pattern in this framework. One Lead agent
-creates and manages 3-8 Teammate agents using `TeamCreate` and `SendMessage`. Teammates
-are persistent and stateful: they hold context across phases, report back to the Lead,
-and flag blockers. The Lead gates every phase transition based on teammate reports.
+The 2-tier Hive Mind is the core coordination pattern in this framework. One
+Lead agent creates and manages 3-8 persistent teammates. Teammates are
+stateful: they hold context across phases, report back to the Lead, and flag
+blockers. The Lead gates every phase transition based on teammate reports.
 
 This is distinct from a Worker Swarm, where the lead writes every prompt, workers are
 fire-and-forget, and there is no ongoing communication. In a 2-tier Hive Mind, the
@@ -46,7 +46,7 @@ Use a different pattern when:
                     |  (orchestrator)  |
                     +--------+---------+
                              |
-              TeamCreate / SendMessage (broadcast + direct)
+              Team coordination and messaging
                              |
           +------------------+------------------+
           |                  |                  |
@@ -56,13 +56,12 @@ Use a different pattern when:
   +--------------+   +--------------+   +--------------+
           |                  |                  |
           +------------------+------------------+
-                    SendMessage (to lead)
+                    message (to lead)
 ```
 
-The Lead is the only agent that calls `TeamCreate`, `TaskCreate`, and `TeamDelete`. The
-Lead advances phases and owns the task list. Teammates communicate only upward to the
-Lead (or peer-to-peer when the Lead explicitly authorizes it for shared-state
-negotiation).
+The Lead advances phases and owns the task list. Teammates communicate only
+upward to the Lead unless the Lead explicitly authorizes peer-to-peer
+coordination for shared-state negotiation.
 
 ---
 
@@ -121,9 +120,9 @@ Phase 9: Ship             (PR created, team shut down gracefully)
    - File ownership map: one owner per file; gate files marked explicitly
    - TDD contracts: test signatures and edge cases per area
    - Architecture decisions: numbered and concrete
-3. Calls `TeamCreate` to initialize the team
-4. Calls `TaskCreate` for Phase 1 audit tasks with correct `blockedBy` dependencies
-5. Spawns teammates via the agent `Task` tool, with file ownership in each prompt
+3. Initializes the team on the chosen runtime
+4. Registers Phase 1 audit tasks with correct dependencies
+5. Spawns teammates with file ownership in each prompt
 6. Broadcasts plan to all teammates
 
 **Exit criteria:**
@@ -332,9 +331,9 @@ On `abort`: commit current state, open WIP PR, shut down team.
 **What the Lead does:**
 
 1. Creates the PR
-2. Sends `shutdown_request` to each teammate via `SendMessage`
+2. Sends `shutdown_request` to each teammate via `message`
 3. Waits for teammate acknowledgment
-4. Calls `TeamDelete`
+4. Calls `close-team`
 5. Reports PR URL to the user
 
 **Exit criteria:**
@@ -431,12 +430,12 @@ phase gates. This provides git-level enforcement on top of the ownership protoco
 
 ## Communication Protocol
 
-All inter-agent communication routes through `SendMessage`. The patterns are:
+All inter-agent communication routes through `message`. The patterns are:
 
 **Lead to all teammates (broadcast):**
 
 ```
-SendMessage(
+message(
   type: "broadcast",
   content: "Phase 2 complete. Proceeding to Phase 3. [REMINDER block]. Claim tasks."
 )
@@ -445,7 +444,7 @@ SendMessage(
 **Teammate to Lead (status report):**
 
 ```
-SendMessage(
+message(
   type: "message",
   recipient: "team-lead",
   content: "Phase 2 complete for API module. Test stubs at tests/test_api.py. No blockers."
@@ -455,7 +454,7 @@ SendMessage(
 **Teammate to Lead (blocker):**
 
 ```
-SendMessage(
+message(
   type: "message",
   recipient: "team-lead",
   content: "BLOCKED: need to modify config/settings.py but it belongs to builder-data.
@@ -466,7 +465,7 @@ SendMessage(
 **Lead to teammate (shutdown):**
 
 ```
-SendMessage(
+message(
   type: "shutdown_request",
   recipient: "builder-api",
   content: "Phase 9 complete. Work done. Shutting down team."
@@ -496,7 +495,7 @@ FILES <your owned files: the ONLY files you edit>
 READ_ONLY <reference files to read but not modify>
 TDD <test stub paths and expected Green-state verification commands>
 PHASE <current phase number and name>
-COORDINATE SendMessage to <lead name> for blockers and phase completions
+COORDINATE message to <lead name> for blockers and phase completions
 ```
 
 Example for a 5-agent API build sprint:
@@ -509,7 +508,7 @@ FILES src/api/payments.py, src/api/validators.py
 READ_ONLY src/api/base.py, config/api_config.yaml
 TDD tests/test_payments.py (must pass before done)
 PHASE 3 (Refactor): implement against Phase 2 test stubs
-COORDINATE SendMessage to team-lead for blockers and phase completions
+COORDINATE message to team-lead for blockers and phase completions
 ```
 
 ---
@@ -532,28 +531,28 @@ hardener         | PINK | owns: tests/ (phases 5+)
 **Phase 0 (Lead):**
 
 ```
-Lead: TeamCreate("api-module-team")
-Lead: TaskCreate(audit-api, audit-models, audit-tests)
+Lead: initialize-team("api-module-team")
+Lead: register-task(audit-api, audit-models, audit-tests)
 Lead: Task(spawn "builder-api",   model=sonnet, effort=high, prompt="[template above]")
 Lead: Task(spawn "builder-models", model=sonnet, effort=high, prompt="[template]")
 Lead: Task(spawn "tester",         model=sonnet, effort=medium, prompt="[template]")
 Lead: Task(spawn "hardener",       model=sonnet, effort=medium, prompt="[template]")
-Lead: SendMessage(type=broadcast, content="Phase 0 complete. Claim audit tasks.")
+Lead: message(type=broadcast, content="Phase 0 complete. Claim audit tasks.")
 ```
 
 **Phase 1 (Teammates audit in parallel):**
 
 ```
 builder-api:    [reads existing API surface]
-                SendMessage(lead, "Audit done. Found 3 legacy endpoints to preserve.
+                message(lead, "Audit done. Found 3 legacy endpoints to preserve.
                              No conflicts. See audit-api.md")
 
 builder-models: [reads model layer]
-                SendMessage(lead, "Audit done. payment.py does not exist yet (greenfield).
+                message(lead, "Audit done. payment.py does not exist yet (greenfield).
                              transaction.py has 1 shared field with billing module.")
 
 tester:         [reads test suite]
-                SendMessage(lead, "Audit done. Test coverage at 41% overall.
+                message(lead, "Audit done. Test coverage at 41% overall.
                              No existing payments tests. Clean slate.")
 ```
 
@@ -561,8 +560,8 @@ tester:         [reads test suite]
 
 ```
 Lead: [verifies all 3 audit tasks completed, no critical blockers]
-Lead: TaskCreate(design-api, design-models, design-stubs)
-Lead: SendMessage(type=broadcast,
+Lead: register-task(design-api, design-models, design-stubs)
+Lead: message(type=broadcast,
         content="Phase 1 complete. Proceeding to Phase 2 (Design).
                  REMINDER: GOAL: Build payments API module.
                  FILES: unchanged. Claim design tasks.")
@@ -573,15 +572,15 @@ Lead: SendMessage(type=broadcast,
 ```
 tester: [writes failing test stubs for all payment flows]
         [commits tests/test_payments.py with stubs in Red state]
-        SendMessage(lead, "Design done. Stubs written and confirmed failing.
+        message(lead, "Design done. Stubs written and confirmed failing.
                     See tests/test_payments.py. 14 stubs total.")
 
 builder-api:    [documents API contract, validates against stubs]
-                SendMessage(lead, "Design done. API spec at docs/api-payments.md.
+                message(lead, "Design done. API spec at docs/api-payments.md.
                             Aligns with tester stubs.")
 
 builder-models: [documents model schema]
-                SendMessage(lead, "Design done. Model schema at docs/models-payment.md.")
+                message(lead, "Design done. Model schema at docs/models-payment.md.")
 ```
 
 **Lead TDD gate check:**
@@ -589,8 +588,8 @@ builder-models: [documents model schema]
 ```
 Lead: [verifies test stubs exist and fail for all features]
 Lead: [approves Phase 2 exit]
-Lead: TaskCreate(impl-api, impl-models)
-Lead: SendMessage(type=broadcast,
+Lead: register-task(impl-api, impl-models)
+Lead: message(type=broadcast,
         content="Phase 2 complete. TDD gate passed. Proceeding to Phase 3 (Refactor).
                  REMINDER: implement against Phase 2 stubs. Make them pass (Green state).")
 ```
@@ -600,46 +599,14 @@ report back; Lead verifies exit criteria and gates the next phase.
 
 ---
 
-## Claude Code Implementation
+## Runtime Note
 
-In Claude Code, the Lead uses:
+Hive Mind is the pattern that changes most by runtime because team identity,
+messaging, and phase gating are not exposed the same way everywhere.
 
-- `TeamCreate(name)`: initialize the team and get a team ID
-- `TaskCreate(name, blockedBy=[...])`: add tasks to the shared task list
-- `Task(spawn teammate, model, prompt)`: spawn a persistent teammate agent
-- `SendMessage(type, recipient, content)`: communicate with teammates
-- `TaskList()`: inspect current task state
-- `TeamDelete()`: shut down the team after Phase 9
-
-Teammates use:
-
-- `SendMessage(type="message", recipient="team-lead", content=...)`: report to Lead
-- Standard file tools (Read, Edit, Write, Bash) within their owned files
-
-Enable agent teams in Claude Code settings:
-
-```json
-{
-  "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-}
-```
-
----
-
-## Codex Equivalent
-
-In Codex (or any agentic framework without native TeamCreate), implement the same
-pattern using:
-
-- A top-level orchestrator agent that holds the phase state machine
-- Sub-agents spawned via the `Task` tool with explicit file ownership in the system
-  prompt
-- A shared scratchpad file (e.g., `tmp/team-status.md`) where teammates append status
-  lines and the orchestrator reads to gate phases
-- Direct message passing via append-only log files when `SendMessage` is not available
-
-The phase logic, file ownership rules, TDD gates, and re-anchoring reminders all apply
-identically regardless of the underlying framework.
+- Claude Code adapter: `../../runtimes/claude-code/pattern-adapters.md`
+- Codex adapter: `../../runtimes/codex/pattern-adapters.md`
+- OpenClaw adapter: `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 
@@ -701,5 +668,5 @@ Track these per sprint to identify process health:
   parallel work
 - [Decision Tree](../guides/decision-tree.md): decision guide for choosing between
   Patchwork, Worker Swarm, and Hive Mind variants
-- [Orchestrator Prompt](../templates/orchestrator-prompt.md): prompt template for
+- [Orchestrator Prompt](../../templates/universal/orchestrator-prompt.md): prompt template for
   spawning and coordinating teammates

@@ -251,6 +251,6 @@ boundaries, phase gates, and safety-critical behavior.
 ## Related
 
 - [Drift Detection](drift-detection.md)
-- [Orchestrator Prompt Template](../templates/orchestrator-prompt.md)
+- [Orchestrator Prompt Template](../../templates/universal/orchestrator-prompt.md)
 - [Sprint Planning Guide](../guides/sprint-planning.md)
 - [TDD Contracts Template](tdd-contracts-template.md)

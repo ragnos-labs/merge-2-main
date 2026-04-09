@@ -16,6 +16,9 @@ Use this as a reference for how the pieces fit together. Every decision made her
 ordered) follows from the patterns described in the canonical docs. Links to those
 docs appear throughout.
 
+**Runtime assumption:** Claude Code or Codex with explicit worktree isolation.
+Pattern semantics are universal; spawn mechanics are runtime-specific.
+
 ---
 
 ## Scenario

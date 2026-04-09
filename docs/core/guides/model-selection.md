@@ -217,80 +217,29 @@ than model quality. Managing the budget is an operational discipline, not an aft
 
 ---
 
-## Platform Surface Constraints
+## Runtime Surface Notes
 
-Not all platforms expose the same capabilities. Running a workflow on the wrong surface produces
-silent degradation, not errors. This section maps what each platform actually supports and defines
-the routing rules that follow from those gaps.
+Model tiers remain universal, but the runtime surface changes the tool budget,
+parallelism ceiling, and failure modes around those models.
 
-### Platform Capability Matrix
+Routing rule:
 
-```
-+----------------------+---------------------+---------------------+---------------------+
-| Capability           | Claude Code (Max)   | Codex               | OpenClaw (Bedrock)  |
-+----------------------+---------------------+---------------------+---------------------+
-| Web search           | Yes                 | No (native)         | No                  |
-+----------------------+---------------------+---------------------+---------------------+
-| Context compaction   | Yes                 | No                  | No                  |
-+----------------------+---------------------+---------------------+---------------------+
-| Tool Search          | Yes                 | No                  | No                  |
-+----------------------+---------------------+---------------------+---------------------+
-| Fast mode            | Yes                 | No                  | No                  |
-+----------------------+---------------------+---------------------+---------------------+
-| Background           | Yes (Task tool)     | Partial             | Yes                 |
-| subagents            |                     | (6-thread cap)      | (8 concurrent,      |
-|                      |                     |                     | sessions_spawn)     |
-+----------------------+---------------------+---------------------+---------------------+
-| Cron / ambient       | No (session-based)  | No                  | Yes                 |
-+----------------------+---------------------+---------------------+---------------------+
-```
+- Choose tier and effort here.
+- Check the runtime-specific constraints in `docs/runtimes/` before finalizing
+  the run plan.
 
-**Codex model context:** Codex runs OpenAI models (GPT-5.4 as of 2026), not Claude. No Bedrock
-routing applies to Codex. Its native tools differ from Claude Code's dedicated tools: no Read,
-Edit, Grep, or Glob equivalents. Codex background parallelism is capped at 6 threads per session.
+Fast summary:
 
-### Silent Failure Modes on Bedrock
+- Claude Code: strongest built-in coordination ergonomics.
+- Codex: sandboxed agent threads and explicit `AGENTS.md` bootstrap.
+- OpenClaw: Bedrock-only, best for ambient or daemon-style work rather than
+  interactive coding sessions.
 
-These do not surface as errors. They produce wrong results quietly, which makes them dangerous in
-multi-agent pipelines where downstream agents trust the output.
+Detailed capability gaps and Bedrock-specific hazards live in:
 
-- **WebSearch / WebFetch on Bedrock:** calls return empty findings with no error signal. Any agent
-  relying on live web data will silently produce stale or empty research.
-- **Llama4 Maverick on structured extraction:** enters infinite loops. The model never returns.
-  No timeout error is raised by default; the thread hangs.
-- **Missing model ID prefix or suffix:** the `us.` region prefix and `-v1:0` version suffix are
-  required on most Bedrock Claude model IDs. Omitting either causes a silent ValidationException
-  that looks like an empty response in some SDK configurations.
-- **Broken tool use on Llama variants and DeepSeek R1:** tool invocations return raw JSON strings
-  instead of parsed tool calls. The agent receives a string it cannot act on and either errors
-  downstream or silently drops the tool result.
-
-### Routing Rules
-
-These rules are not preferences. Violating them produces the failure modes listed above.
-
-**Use Claude Code (Max) or Codex for:**
-
-- Sprint orchestration and all Hive Mind coordination
-- All coding, debugging, and code review work
-- Any workflow that requires web search, context compaction, Tool Search, or Fast mode
-- Manual evals, one-off audits, and any human-triggered analysis
-
-**Use Bedrock for:**
-
-- External non-coding pipelines only: CMS content generation, GraphRAG ingestion, product
-  pipelines that run outside Claude Code sessions
-- Workflows where ambient/background execution is not required and no server-side tools are needed
-
-**Use OpenClaw for:**
-
-- Ambient and cron workflows that must run without an active Claude Code session
-- Scheduled pipelines and persistent background agents
-
-**Never run sprint orchestration on Bedrock.** Context bloat accumulates without compaction,
-server-side tools return empty results silently, and certain model variants produce hanging or
-malformed tool calls. A sprint that appears to be running may be producing useless output at full
-cost.
+- `../../runtimes/claude-code/primitives-and-limits.md`
+- `../../runtimes/codex/primitives-and-limits.md`
+- `../../runtimes/openclaw/bedrock-gotchas.md`
 
 ---
 

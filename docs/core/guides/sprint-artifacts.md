@@ -193,7 +193,7 @@ The `sprint_summary` entry should include a `buckets` object with counts:
 |                           |                                              | task return value   |
 +---------------------------+----------------------------------------------+---------------------+
 | Teammates (Hive Mind)     | Nothing directly                             | Report to lead via  |
-|                           |                                              | SendMessage; lead   |
+|                           |                                              | runtime message     |
 |                           |                                              | decides what to log |
 +---------------------------+----------------------------------------------+---------------------+
 ```

@@ -301,6 +301,12 @@ reads the response body, parses the JSON contract, and uses it to advance
 the sprint state. This method is native to the OpenClaw runtime and requires
 no file system writes.
 
+For exact transport mechanics by runtime, see:
+
+- `../../runtimes/claude-code/pattern-adapters.md`
+- `../../runtimes/codex/pattern-adapters.md`
+- `../../runtimes/openclaw/pattern-adapters.md`
+
 ---
 
 ## Structured vs. Freeform Messages

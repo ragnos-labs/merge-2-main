@@ -5,7 +5,9 @@ description: Lead-directed parallel execution with 4-12 worker agents. The lead 
 
 # Worker Swarm
 
-The Worker Swarm is the workhorse pattern for parallel execution. One lead agent (your active Claude Code or Codex session) orchestrates 4-12 worker agents across two phases: a dispatch phase that fans work out, and a consolidation phase that pulls it back in.
+The Worker Swarm is the workhorse pattern for parallel execution. One lead
+agent orchestrates 4-12 worker agents across two phases: a dispatch phase that
+fans work out, and a consolidation phase that pulls it back in.
 
 The defining characteristic: the lead writes every prompt. Workers execute and report. Workers never spawn sub-workers.
 
@@ -42,7 +44,7 @@ Poor fits:
 ## Architecture
 
 ```
-Lead Agent (main Claude Code session)
+Lead Agent
     |
     +-- Dispatch Phase
     |     +-- Worker 1  (owns files: src/auth/*)
@@ -66,7 +68,9 @@ The lead never goes idle during dispatch. While workers run in the background, t
 
 ### Phase 1: Dispatch
 
-The lead fans all workers out in as few turns as possible. Because the Agent tool has a practical ceiling of roughly 8 tool calls per assistant message, split large swarms across two consecutive turns.
+The lead fans all workers out in as few turns as possible. If your runtime has a
+parallelism ceiling, split large swarms into explicit waves rather than
+overloading a single dispatch turn.
 
 For each worker, the lead writes a prompt that includes:
 
@@ -75,7 +79,9 @@ For each worker, the lead writes a prompt that includes:
 3. **Output format**: what the worker must return (file paths changed, test results, structured summary)
 4. **Done criteria**: how the worker knows it is finished
 
-All workers run with `run_in_background: true` unless a later worker in the same turn depends on an earlier one (rare; usually means you should restructure).
+All workers should run asynchronously unless a later worker in the same batch
+depends on an earlier one. If that dependency exists, restructure the swarm
+into waves instead of mixing serial and parallel work in one dispatch pass.
 
 Example dispatch for 8 workers fixing module test suites:
 
@@ -249,9 +255,10 @@ Return when done:
 - Any tests you could not fix, with one-line explanation for each
 ```
 
-**Step 3: Dispatch all 8 workers in a single turn (background)**
+**Step 3: Dispatch all 8 workers in a single asynchronous batch**
 
-Fire all 8 with `run_in_background: true`. The lead then prepares the consolidation checklist while they work.
+Launch all 8 workers. The lead then prepares the consolidation checklist while
+they work.
 
 **Step 4: Consolidate**
 
@@ -268,40 +275,15 @@ After all 8 workers pass review, commit all changes in a single commit with a me
 
 ---
 
-## Claude Code Usage
+## Runtime Note
 
-In Claude Code, workers are spawned using the Agent tool (also called the Task tool in some contexts):
+Worker Swarm execution mechanics vary by runtime, but the pattern contract is
+the same everywhere: one lead writes every prompt, workers own non-overlapping
+files, and consolidation happens sequentially.
 
-```
-Agent(
-  model: "claude-sonnet-4-6",
-  run_in_background: true,
-  prompt: "Your scope: tests/auth/  ..."
-)
-```
-
-Key settings:
-
-- `run_in_background: true` for all Phase 1 and most Phase 2 workers
-- Set `model` explicitly per worker based on task type
-- Do not use `run_in_background: false` unless a later agent in the same turn needs the result (almost never needed in a properly structured swarm)
-
-**Tool call ceiling**: Claude Code has a hard ceiling of approximately 8 tool calls per assistant message. A swarm of 12 workers must be split into two turns of 6 each. The lead fires the first 6, waits, then fires the remaining 6 in the next turn.
-
-**Reading results**: Workers write output to their context. The lead reads it with the Read tool (for files the worker was asked to produce) or by reading the agent's returned message directly. Always read; never assume.
-
----
-
-## Codex Usage
-
-In Codex, parallel agents run as separate sandbox instances. The lead session dispatches by opening multiple sandbox agents with distinct prompts and non-overlapping file scopes.
-
-Codex-specific notes:
-
-- Each sandbox agent has its own file system state. Changes in one sandbox do not affect others.
-- After workers complete, the lead applies each worker's diff to the main workspace manually (review each diff before applying).
-- Ownership is enforced by sandbox isolation rather than convention, which makes accidental file conflicts impossible but requires explicit merge steps.
-- Use the `--scope` flag or equivalent prompt-level scope restriction to prevent workers from reading outside their module. This keeps context windows lean and reduces the chance of a worker "helping" with something outside its task.
+- Claude Code adapter: `../../runtimes/claude-code/pattern-adapters.md`
+- Codex adapter: `../../runtimes/codex/pattern-adapters.md`
+- OpenClaw adapter: `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 

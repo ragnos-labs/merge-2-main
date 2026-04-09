@@ -11,6 +11,9 @@ needs to evaluate vector databases before building a semantic search feature. Th
 have no prior internal knowledge of the space and want an evidence-based recommendation
 within a single working session.
 
+**Runtime assumption:** Claude Code or another runtime with reliable web research
+capabilities. Check the runtime surface docs before copying the execution flow.
+
 ---
 
 ## Scenario

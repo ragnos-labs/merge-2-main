@@ -15,10 +15,9 @@ The Scribe does not execute sprint work. It observes and records.
 
 ## What the Scribe Is
 
-The Scribe is a lightweight subagent spawned alongside your sprint agents. It runs in
-the background with `run_in_background=true` and operates on a poll cycle, typically
-every 5 minutes. It reads scratchpads, git logs, and task status files. It writes entries
-to the sprint meta-log.
+The Scribe is a lightweight observer agent spawned alongside your sprint agents.
+It operates on a poll cycle, typically every 5 minutes. It reads scratchpads,
+git logs, and task status files. It writes entries to the sprint meta-log.
 
 The Scribe has no write access to sprint working files. It only appends to the meta-log.
 
@@ -105,26 +104,20 @@ as a final log entry. The summary includes:
 
 ## How to Spawn a Scribe
 
-Spawn the Scribe via the Agent tool after the sprint is initialized and before the
-first phase begins.
+Spawn the Scribe after the sprint is initialized and before the first phase
+begins. The exact primitive depends on runtime, but the operating contract does
+not change:
 
-```
-Agent(
-    description="Sprint Scribe for <slug>",
-    prompt=<SCRIBE_PROMPT>,
-    run_in_background=true,
-    model="haiku",
-)
-```
+- One Scribe per sprint
+- Read-only access to logs, scratchpads, and status artifacts
+- Fast, inexpensive model tier
+- Non-blocking execution so the lead or orchestrator keeps moving
 
-Use a fast, inexpensive model. The Scribe does mechanical polling and log appending.
-A small model is appropriate.
+Runtime-specific spawn mechanics live in:
 
-Set `run_in_background=true`. The Scribe should not block the lead agent or consume
-a foreground turn.
-
-Spawn only one Scribe per sprint. Multiple Scribes will produce duplicate log entries
-and conflicting dedup state.
+- `../../runtimes/claude-code/pattern-adapters.md`
+- `../../runtimes/codex/pattern-adapters.md`
+- `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 

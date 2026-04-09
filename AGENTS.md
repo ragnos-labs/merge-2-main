@@ -18,7 +18,7 @@ Hive Mind is the first complete layer; more layers are planned.
 
 The framework is tool-agnostic: the patterns and principles apply regardless of
 whether you are running on Claude Code, Codex, or OpenClaw. Runtime-specific
-adapter notes live in `docs/patterns/codex-runtime.md`.
+notes live under `docs/runtimes/`.
 
 ---
 
@@ -26,11 +26,13 @@ adapter notes live in `docs/patterns/codex-runtime.md`.
 
 ```
 docs/
-  patterns/     # Five coordination patterns + Codex runtime adapter
-  guides/       # Cross-cutting practices: model selection, TDD, checkpoints
-  references/   # Anti-patterns, handoff schemas, templates, prompt design
-  templates/    # Copy-paste JSON, TOML, and prompt starters
-  examples/     # Full end-to-end worked examples for each pattern
+  core/
+    patterns/   # Universal coordination patterns
+    guides/     # Universal operating guidance
+    references/ # Schemas, anti-patterns, prompt design
+    examples/   # Worked examples with explicit runtime assumptions
+  runtimes/     # Claude Code, Codex, and OpenClaw docs
+  templates/    # Universal templates plus runtime-specific configs
 ```
 
 No source code lives here. Every file is documentation.
@@ -98,27 +100,25 @@ Do not commit immediately after writing. The re-read step is mandatory.
 Four things to know before spawning agents on this repo.
 
 **1. Entry point for pattern and runtime docs.**
-`docs/patterns/codex-runtime.md` covers Codex-specific primitives, topology
-diagrams, handoff formats, the run ledger schema, and prompt templates for
-each role (orchestrator, lead, worker, explorer, verifier).
+Start with `docs/runtimes/codex/overview.md`, then read
+`docs/runtimes/codex/setup-and-agents-md.md` if you need the full Codex
+bootstrap flow.
 
 **2. Concurrency limit.**
 Codex defaults to 6 simultaneous agent threads (`max_threads = 6`). Design
 your decomposition to fit within this budget. For topologies larger than 6
 active threads, run in waves: close completed threads before spawning the
-next batch. A config template lives at `docs/templates/codex-config.toml`.
+next batch. A config template lives at `docs/templates/codex/codex-config.toml`.
 
 **3. CLI vs IDE context loading.**
 Codex CLI reads `AGENTS.md` automatically at session start. Codex IDE (web)
 does not auto-load it; paste the relevant section as an XML block into your
-session prompt. Role config files in `docs/templates/codex-agents/` are
+session prompt. Role config files in `docs/templates/codex/codex-agents/` are
 formatted for direct paste into IDE sessions.
 
 **4. Pattern selection.**
-Start with `docs/guides/decision-tree.md`. Five questions, under 60 seconds,
-picks the right pattern. When unsure, default to Worker Swarm: it is the
-simplest multi-agent pattern and the easiest to recover from if you picked
-wrong.
+Start with `docs/core/guides/decision-tree.md`. After you pick a pattern,
+switch to the matching runtime doc under `docs/runtimes/`.
 
 ---
 
@@ -131,8 +131,8 @@ The patterns documented here are runtime-agnostic. They have been validated on:
 - **Codex** (OpenAI): `spawn_agent`, `send_input`, `wait`, `close_agent`
 - **OpenClaw**: follows the Claude Code coordination model
 
-Primitive mappings between runtimes are in `docs/patterns/codex-runtime.md`
-and `docs/patterns/overview.md`.
+Primitive mappings between runtimes are in `docs/runtimes/` and the short
+compatibility section in `docs/core/patterns/overview.md`.
 
 ---
 
@@ -140,5 +140,5 @@ and `docs/patterns/overview.md`.
 
 A `.codex/agents/` directory with per-role `.toml` config files would make
 role assignment automatic at spawn time. Template configs already exist at
-`docs/templates/codex-agents/`. Copying them to `.codex/agents/` with final
+`docs/templates/codex/codex-agents/`. Copying them to `.codex/agents/` with final
 values would complete the Codex bootstrap layer.

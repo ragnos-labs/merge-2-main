@@ -12,8 +12,10 @@ execute work you have already planned.
 
 Two variants share the same structure:
 
-- **Codebase Research Swarm**: agents use Grep, Glob, and Read to scan a codebase in parallel.
-- **Internet Research Swarm**: agents use WebSearch and WebFetch to gather external data.
+- **Codebase Research Swarm**: agents use repository search and file inspection
+  tools to scan a codebase in parallel.
+- **Internet Research Swarm**: agents use live web research tools to gather
+  external data.
 
 The manifest, wave model, synthesis contract, and agent prompt structure are identical
 across both variants. The only difference is the tool set assigned to each agent.
@@ -89,8 +91,7 @@ Key fields:
 - `wave`: Integer. All questions in the same wave run in parallel. Lower waves run first.
 - `blockedBy`: Array of question IDs that must complete before this question starts.
   An empty array means the question runs in wave 1 with no prerequisites.
-- `model_tier`: `haiku` for mechanical extraction, `sonnet` for analysis, `opus` for
-  complex multi-source synthesis.
+- `model_tier`: use your runtime's fast, standard, and frontier tiers consistently.
 - `sources`: Allowed tool categories for this question.
 - `depth`: `broad` (wave 1 discovery), `focused` (wave 2 deep dives),
   `exhaustive` (wave 3 verification).
@@ -161,10 +162,10 @@ Agents use file system tools to scan a codebase in parallel. This variant is sui
 +------------+--------------------------------------------------+
 | Tool       | Best For                                         |
 +------------+--------------------------------------------------+
-| Glob       | Finding files by name pattern or extension       |
-| Grep       | Searching for patterns, symbols, or text         |
-| Read       | Reading specific files once located              |
-| Bash (git) | Log, blame, diff for history and ownership       |
+| File discovery  | Finding files by name pattern or extension |
+| Search          | Searching for patterns, symbols, or text   |
+| File inspection | Reading specific files once located        |
+| Git history     | Log, blame, diff for history and ownership |
 +------------+--------------------------------------------------+
 ```
 
@@ -181,11 +182,8 @@ SCOPE: <directory or file pattern to focus on>
 CONTEXT: <background from prior waves, if any>
 
 TOOLS AVAILABLE:
-- Claude Code: Glob, Grep, Read (dedicated file tools)
-- Codex: standard file operations (read_file, search_files, list_directory or equivalent native tools)
-- OpenClaw: plugin tools registered via `api.registerTool()` - use whatever file tools are registered
-
-Note: Tool names are runtime-specific. Use the file search and read capabilities native to your runtime.
+- The repository search, file discovery, file inspection, and history tools
+  exposed by your runtime
 
 INSTRUCTIONS:
 1. Locate relevant files using the file search tool for your runtime
@@ -240,8 +238,8 @@ Agents use web tools to gather external data. This variant is suited for:
 +------------+--------------------------------------------------+
 | Tool       | Best For                                         |
 +------------+--------------------------------------------------+
-| WebSearch  | Current events, recent releases, broad landscape |
-| WebFetch   | Specific URLs, documentation pages, API specs    |
+| Search engine or discovery tool | Current events, recent releases, broad landscape |
+| Page retrieval tool             | Specific URLs, documentation pages, API specs    |
 +------------+--------------------------------------------------+
 ```
 
@@ -254,11 +252,11 @@ QUESTION (RQ-NN): <question text>
 
 CONTEXT: <any background the operator provides>
 
-TOOLS AVAILABLE: WebSearch, WebFetch
+TOOLS AVAILABLE: the live-search and page-retrieval tools available in your runtime
 
 INSTRUCTIONS:
 1. Run 2-3 web searches with varied query phrasings
-2. For promising leads, fetch the source page directly with WebFetch
+2. For promising leads, fetch the source page directly with your page retrieval tool
 3. Focus on primary sources: official docs, announcements, benchmarks
 4. Compile findings as structured bullets with source URLs
 
@@ -289,11 +287,11 @@ QUESTION (RQ-NN): <question text>
 PRIOR FINDINGS (from Wave 1):
 <operator pastes relevant wave 1 bullets here>
 
-TOOLS AVAILABLE: WebSearch, WebFetch
+TOOLS AVAILABLE: the live-search and page-retrieval tools available in your runtime
 
 INSTRUCTIONS:
 1. Build on the prior findings; do not re-research what is already known
-2. Read primary sources directly using WebFetch
+2. Read primary sources directly using your page retrieval tool
 3. Resolve any contradictions surfaced in prior findings
 4. Focus on depth and citation quality over breadth
 
@@ -323,7 +321,7 @@ CLAIMS TO VERIFY:
 2. "<claim B>" (Source: <original source>)
 3. "<claim C>" (Source: <original source>)
 
-TOOLS AVAILABLE: WebSearch, WebFetch
+TOOLS AVAILABLE: the live-search and page-retrieval tools available in your runtime
 
 INSTRUCTIONS:
 1. For each claim, search for independent corroboration (a different source than original)
@@ -541,60 +539,15 @@ wave 2 and wave 3 structure. The manifest scales linearly.
 
 ---
 
-## Claude Code Usage
+## Runtime Note
 
-In Claude Code, the operator is the main session. Research agents are background Task
-workers spawned with the `Task(...)` tool.
+Research Swarm is the most runtime-sensitive pattern because discovery agents,
+wave gating, and live-source access vary a lot across surfaces. The manifest,
+wave structure, and synthesis contract stay universal; the runner changes.
 
-Each wave is a batch of parallel `Task(...)` calls. The operator awaits all tasks in a
-wave before reviewing results and spawning the next wave.
-
-The operator's prompt for each agent should include:
-
-1. The question text from the manifest.
-2. The `context` field content (especially wave 1 findings for wave 2 agents).
-3. The allowed tools for this question.
-4. The required output format (structured bullets, confidence tag, source citations).
-
-After all waves complete, the operator either writes the Synthesis Report directly or
-spawns a final synthesis agent with all wave outputs as context.
-
----
-
-## Codex Usage
-
-Codex does not have native background sub-agent spawning within a single session.
-
-The Codex adaptation treats each wave as a bounded retrieval and synthesis cycle within
-the main session:
-
-1. Create the manifest exactly as described above.
-2. Execute wave 1 through parallel tool calls (web searches, file reads) rather than
-   spawning independent agents.
-3. Review wave 1 results before proceeding to wave 2.
-4. Repeat for each wave, respecting `blockedBy` ordering.
-5. If true parallel fan-out is required, open multiple Codex sessions (one per agent)
-   and have the operator session collect results.
-
-The manifest, wave structure, cross-verification gate, and Synthesis Report format are
-the same regardless of platform. Codex operators run the same process with sequential
-tool calls substituting for parallel agent spawning.
-
-> **Codex: wave gating is manual.** Codex has no native `blockedBy` enforcement. Run all
-> Wave 1 agents (or tool calls), review their outputs, then initiate Wave 2. The manifest
-> serves as your checklist: mark each question complete before advancing.
-
----
-
-## OpenClaw Usage
-
-In OpenClaw, `sessions_spawn` can run Wave 1 agents in parallel (up to 8 concurrent).
-Each agent is a session assigned to one manifest question. Wave advancement still requires
-operator review before spawning the next wave.
-
-OpenClaw uses an announce-back model: each agent posts its synthesis file path to the
-orchestrator channel on completion. The operator collects these paths, reviews all wave
-outputs, then triggers the next wave.
+- Claude Code adapter: `../../runtimes/claude-code/pattern-adapters.md`
+- Codex adapter: `../../runtimes/codex/pattern-adapters.md`
+- OpenClaw adapter: `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 

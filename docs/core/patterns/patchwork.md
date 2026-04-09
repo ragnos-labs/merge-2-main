@@ -40,16 +40,16 @@ One agent. Direct tool use. No delegation.
 ```
 Agent
   |
-  +-- Read file A
-  +-- Edit file A
-  +-- Read file B
-  +-- Edit file B
+  +-- Inspect file A
+  +-- Update file A
+  +-- Inspect file B
+  +-- Update file B
   +-- Commit changes
 ```
 
 The agent reads the relevant files, makes the edits, and commits. There is no
-manifest, no task list, no sub-agent spawning. The agent completes the work in
-the current session using whatever tools are available (Read, Edit, Bash for git).
+manifest, no task list, and no sub-agent spawning. The agent completes the work
+in the current session using the runtime's direct file and shell tools.
 
 **TDD note**: If you are fixing a bug (not just reformatting), write the failing
 test first. Mechanical refactors where existing tests already cover the behavior
@@ -57,29 +57,15 @@ can skip this. When in doubt, write the test.
 
 ---
 
-## Claude Code Usage
+## Runtime Note
 
-In Claude Code, Patchwork is the default mode. The main agent uses the Read,
-Edit, and Bash tools directly. No Task tool invocations needed.
+Patchwork maps cleanly across all supported runtimes because it does not need
+team primitives. Use the runtime docs only for environment setup, limits, and
+tool naming:
 
-Model guidance:
-
-- Low effort: trivial edits with no ambiguity (literal find-and-replace, constant swaps)
-- Medium effort: edits that require reading context to get right (rename with call-site analysis)
-- High effort: edits that involve judgment (refactor that preserves observable behavior)
-
-Match the effort level to the complexity of the judgment required, not to the
-number of files touched.
-
----
-
-## Codex Usage
-
-In Codex, Patchwork is also the natural default. The agent works directly in the
-terminal session. No `spawn_agent` calls needed.
-
-Use the Codex IDE for paste-based context when the change spans many files and
-you want the agent to see all relevant code at once before editing.
+- `../../runtimes/claude-code/overview.md`
+- `../../runtimes/codex/overview.md`
+- `../../runtimes/openclaw/overview.md`
 
 ---
 

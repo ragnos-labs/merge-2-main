@@ -558,62 +558,15 @@ merge time), then WS-B, then WS-A, then WS-D. PR opened.
 
 ---
 
-## Claude Code Usage
+## Runtime Note
 
-In Claude Code, the Orchestrator is the main agent in the current session. Leads
-and Bees are spawned via the Task tool.
+3-tier Hive Mind is universally the most coordination-heavy pattern. Keep the
+pattern semantics here; use the runtime docs for the actual orchestration
+surface, thread limits, and handoff delivery mechanism.
 
-**Spawning a Lead (Claude Code):**
-
-```
-Use the Task tool with a self-contained prompt that includes:
-- The Lead's workstream scope and file ownership list
-- The current phase and what the Lead must accomplish in it
-- The exit criteria for the Lead's phase-complete report
-- The scratchpad file path for their workstream
-- The sprint state file path (read-only for Leads)
-- The model and effort level to use
-- Any dependency information (what this workstream is waiting for, if anything)
-```
-
-**Spawning a Bee (via the Lead, not the Orchestrator):**
-
-The Lead's Task return value includes a list of Bee prompts to spawn for the
-next wave. The Lead spawns Bees via its own Task tool calls. The Orchestrator
-does not write Bee prompts directly.
-
-**Model specification.** In Claude Code, specify model tier by name in the
-Task prompt preamble. Example: "You are a Worker Bee. Use a fast, efficient
-model for this task." The exact model string depends on your Claude Code
-configuration and available models.
-
-**Effort specification.** Include effort guidance explicitly in the spawn prompt.
-Example: "Effort: high. This task requires deep reasoning." Leads always receive
-"Effort: high." Bees receive effort guidance matched to their task.
-
----
-
-## Codex Usage
-
-In Codex, the Orchestrator operates as the top-level agent in the terminal
-session. Leads are spawned via `spawn_agent` calls. Bees are spawned by Leads
-via nested `spawn_agent` calls.
-
-**Key difference from Claude Code:** Codex agents share the terminal session
-context differently. Structure each Lead and Bee prompt as fully self-contained:
-include all necessary context in the prompt itself rather than relying on
-inherited session state.
-
-**Sprint state file is especially important in Codex.** Because Codex agents
-do not share a message thread, the sprint state file is the primary coordination
-surface between the Orchestrator and Leads across agent boundaries. The
-Orchestrator updates it after every phase gate. Leads read it at spawn time
-and again before reporting phase-complete.
-
-**Worktree isolation in Codex.** Set up worktree branches before spawning any
-Leads. Point each Lead's spawn to its worktree directory explicitly. This is
-the same as Claude Code worktree usage, just invoked via `spawn_agent` instead
-of the Task tool.
+- Claude Code adapter: `../../runtimes/claude-code/pattern-adapters.md`
+- Codex adapter: `../../runtimes/codex/pattern-adapters.md`
+- OpenClaw adapter: `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 

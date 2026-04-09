@@ -296,43 +296,15 @@ phase provides the integration point regardless of how the agents were coordinat
 
 ---
 
-## Claude Code Usage
+## Runtime Note
 
-In Claude Code, pass the worktree path and branch to each agent via the Task tool:
+Worktree Sprint is runtime-neutral, but each runtime has different ways to pass
+working-directory and branch boundaries into child agents. Use the adapter docs
+for the exact spawn mechanics:
 
-```
-Run in directory: /path/to/.worktrees/auth-refactor--api-routes
-Branch: sprint/auth-refactor--api-routes
-Task: [your workstream task description]
-```
-
-Some versions of the Agent tool support an `isolation: "worktree"` hint. When
-available, it creates a worktree automatically and passes the path to the sub-agent.
-When not available, set up worktrees manually with the INIT commands above and
-reference the absolute paths in your spawn prompts.
-
-Always give agents their absolute worktree path. Relative paths break when the
-agent changes directories during its run.
-
----
-
-## Codex Usage
-
-In Codex, use the terminal session to set up worktrees before spawning agents.
-Pass the worktree path explicitly in the task description:
-
-```
-Your working directory for this task is:
-  /path/to/.worktrees/auth-refactor--api-routes
-
-Your branch is:
-  sprint/auth-refactor--api-routes
-
-Do not commit to any other branch. Do not modify files outside your working directory.
-```
-
-The explicit boundary instruction matters. Codex agents working in long-horizon
-loops can drift outside their assigned scope if the boundary is not stated clearly.
+- `../../runtimes/claude-code/pattern-adapters.md`
+- `../../runtimes/codex/pattern-adapters.md`
+- `../../runtimes/openclaw/pattern-adapters.md`
 
 ---
 

@@ -235,4 +235,4 @@ the sprint's state unpredictable for the orchestrator and for other agents.
 - [TDD Contracts Template](tdd-contracts-template.md)
 - [Checkpoint Protocol](../guides/checkpoint-protocol.md)
 - [Sprint Planning Guide](../guides/sprint-planning.md)
-- [Orchestrator Prompt Template](../templates/orchestrator-prompt.md)
+- [Orchestrator Prompt Template](../../templates/universal/orchestrator-prompt.md)

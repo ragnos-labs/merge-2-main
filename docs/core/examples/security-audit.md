@@ -14,6 +14,9 @@ The full run uses roughly 30 agents: 10 research agents across 3 waves, a synthe
 agent, and 6 fix agents. The operator (your active session) drives every wave transition
 and writes every agent prompt.
 
+**Runtime assumption:** mixed-runtime-friendly example, but the discovery half
+assumes a runtime with dependable code or web scanning for the chosen questions.
+
 ---
 
 ## Scenario

@@ -12,6 +12,9 @@ a distinct module. The lead dispatches, monitors, and consolidates.
 Use this as a reference for how to decompose a feature, write dispatch prompts, and
 handle integration during consolidation.
 
+**Runtime assumption:** runtime-neutral example. Use the matching adapter under
+`docs/runtimes/` for execution mechanics.
+
 ---
 
 ## Scenario
