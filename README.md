@@ -1,4 +1,4 @@
-# merge-2-main
+# merge-2-main by Mr. CLI
 
 **Multi-agent coordination framework for Claude Code, Codex, and OpenClaw.**
 
