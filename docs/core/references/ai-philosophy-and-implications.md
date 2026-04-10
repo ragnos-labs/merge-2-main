@@ -1,18 +1,28 @@
 ---
 title: AI Philosophy And Implications
-description: Placeholder for the philosophical and practical questions that shape how teams work with AI systems.
+description: Early framing for the philosophical and practical questions that shape how teams work with AI systems.
 ---
 
 ## AI Philosophy And Implications
 
-This page is intentionally a placeholder.
+This page is where the larger arguments go once they start affecting real
+engineering choices.
 
-It exists because the question matters now, even if the clean public write-up
-is not done yet.
+Most philosophy pages die by floating too far above the work. This one only
+earns its place if it stays tied to safety, governance, trust, and operating
+discipline.
 
-## What This Will Cover
+## Why This Topic Belongs Here
 
-When this page grows up, it should cover:
+The repo is practical on purpose, but some practical decisions are downstream
+of bigger assumptions:
+
+- what kind of thing an AI system is
+- where responsibility sits when it behaves unpredictably
+- which risks are governance problems versus interface problems
+- what level of anthropomorphism helps versus distorts
+
+## What A Finished Version Should Answer
 
 - which philosophical assumptions about AI actually change how teams operate
 - where those assumptions affect safety, governance, trust, and accountability
@@ -20,13 +30,12 @@ When this page grows up, it should cover:
 - how to separate metaphysics from engineering discipline without pretending
   the metaphysics does not exist
 
-## What It Is Not Yet
+## Current Boundary
 
-It is not yet:
+For now, treat this as a holding room for the questions that are too important
+to ignore and too messy to smuggle into tactical docs as if they were settled.
 
-- a finished essay
-- a manifesto
-- a claim that the repo has resolved the debate
-
-For now, treat this as a reserved seat with a note on it that says "coming
-soon, probably after a few more arguments."
+- It is not a manifesto.
+- It is not a claim that the repo has resolved the debate.
+- It is where the harder arguments wait until they can be written without
+  poisoning the practical pages.

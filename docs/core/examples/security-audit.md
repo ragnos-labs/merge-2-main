@@ -14,9 +14,9 @@ The full run uses roughly 30 agents: 10 research agents across 3 waves, a synthe
 agent, and 6 fix agents. The operator (your active session) drives every wave transition
 and writes every agent prompt.
 
-**Runtime assumption:** runtime-neutral example. The discovery half assumes a
-runtime with dependable repository search, file inspection, or other scanning
-capabilities for the chosen questions. Check
+**Execution note:** This is a runtime-neutral example. The pattern and
+sequencing are the point here; the exact spawn, tool, and handoff mechanics
+depend on the runtime you choose. Use the matching adapter in
 [Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---

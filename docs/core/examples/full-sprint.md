@@ -16,10 +16,10 @@ Use this as a reference for how the pieces fit together. Every decision made her
 ordered) follows from the patterns described in the canonical docs. Links to those
 docs appear throughout.
 
-**Runtime assumption:** runtime-neutral example. Pattern semantics are
-universal; worktree setup and spawn mechanics are runtime-specific. Use the
-matching adapter under [docs/runtimes](../../runtimes/README.md) before copying
-the execution flow.
+**Execution note:** This is a runtime-neutral example. The pattern and
+sequencing are the point here; the exact spawn, tool, and handoff mechanics
+depend on the runtime you choose. Use the matching adapter in
+[Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---
 

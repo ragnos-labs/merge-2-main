@@ -31,3 +31,10 @@ Use Claude Code's native coordination surface for team identity, task state,
 
 Set up worktrees before dispatch and pass absolute worktree paths into every
 workstream prompt. The worktree layer remains infrastructure, not coordination.
+
+## When Not To Force This Runtime
+
+- Do not choose Claude Code just because it feels comfortable if the real need
+  is scheduled or daemon-style execution.
+- Do not let the richer coordination surface tempt you into skipping explicit
+  ownership, phase gates, or verifier steps from the core docs.

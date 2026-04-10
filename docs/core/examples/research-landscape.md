@@ -11,8 +11,9 @@ needs to evaluate vector databases before building a semantic search feature. Th
 have no prior internal knowledge of the space and want an evidence-based recommendation
 within a single working session.
 
-**Runtime assumption:** runtime-neutral example. You need a runtime that can do
-live web search and read the pages it finds. Check
+**Execution note:** This is a runtime-neutral example. The pattern and
+sequencing are the point here; the exact spawn, tool, and handoff mechanics
+depend on the runtime you choose. Use the matching adapter in
 [Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---

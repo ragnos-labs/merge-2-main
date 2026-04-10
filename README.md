@@ -308,15 +308,16 @@ RAGnos](docs/core/guides/how-we-work-at-ragnos.md).
 
 ## Emerging Topics
 
-Some lanes are intentionally stubbed because they matter, but they are not yet
-ready to pretend they are finished.
+Some lanes are intentionally early, but they matter enough to deserve a shelf
+now instead of leaking sideways into the finished docs.
 
 - [AI Philosophy And Implications](docs/core/references/ai-philosophy-and-implications.md):
-  placeholder for the bigger questions and operating consequences
+  where the bigger questions live when they start changing how teams operate
 - [Discovery Vs Invention](docs/core/references/discovery-vs-invention.md):
-  placeholder for the scientific and philosophical debate around AI
-- [Character Layer](docs/core/guides/character-layer.md): placeholder for the
-  higher-level personality surface that sits on top of behavior design
+  the argument shelf for what AI is, what it is not, and why that framing leaks
+  into engineering choices
+- [Character Layer](docs/core/guides/character-layer.md): the next layer above
+  behavior design, where interface style starts helping or hurting the work
 
 Call it an orderly mess, or at least an intentional one.
 

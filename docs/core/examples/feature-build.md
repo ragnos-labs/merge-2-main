@@ -12,8 +12,10 @@ a distinct module. The lead dispatches, monitors, and consolidates.
 Use this as a reference for how to decompose a feature, write dispatch prompts, and
 handle integration during consolidation.
 
-**Runtime assumption:** runtime-neutral example. Use the matching adapter under
-`docs/runtimes/` for execution mechanics.
+**Execution note:** This is a runtime-neutral example. The pattern and
+sequencing are the point here; the exact spawn, tool, and handoff mechanics
+depend on the runtime you choose. Use the matching adapter in
+[Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---
 
