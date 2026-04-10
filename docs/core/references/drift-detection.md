@@ -66,8 +66,8 @@ git log --name-only --no-merges <branch> ^main | sort -u
 
 ### Prevention strategies
 
-- List the exact file paths each workstream is allowed to touch. Glob
-  patterns work well: `src/payments/**`, `tests/payments/**`.
+- List the exact file paths each workstream is allowed to touch. File-pattern
+  rules work well: `src/payments/**`, `tests/payments/**`.
 - Add an explicit "off-limits" list for high-contention files (shared
   types, config, database schemas). State: "If you need to change this
   file, stop and report a blocker; do not modify it yourself."

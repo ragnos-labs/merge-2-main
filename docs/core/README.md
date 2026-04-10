@@ -18,11 +18,18 @@ Use it for the parts that should outlive any one tool vendor:
 
 ## Start Here
 
+Use `docs/core` in this order:
+
+1. Choose the execution pattern.
+2. Read the planning and checkpoint rules that constrain it.
+3. Use references and examples only when you need a schema, contract, or full walkthrough.
+
 - [Pattern Overview](./patterns/overview.md)
 - [Decision Tree](./guides/decision-tree.md)
 - [Sprint Planning](./guides/sprint-planning.md)
 - [Checkpoint Protocol](./guides/checkpoint-protocol.md)
 - [Release Gate](./guides/release-gate.md)
+- [Examples](./examples/feature-build.md)
 
 ## Sections
 
@@ -76,9 +83,9 @@ Reusable contracts, schemas, and source maps:
 - [AI Philosophy And Implications](./references/ai-philosophy-and-implications.md)
 - [Discovery Vs Invention](./references/discovery-vs-invention.md)
 
-### Emerging Topics
+### Additional Guides
 
-Deliberate placeholders for topics that matter but are not done yet:
+Related guidance that is still narrower than the core starting path:
 
 - [How We Work At RAGnos](./guides/how-we-work-at-ragnos.md)
 - [Character Layer](./guides/character-layer.md)
@@ -91,9 +98,3 @@ Worked walkthroughs:
 - [Feature Build](./examples/feature-build.md)
 - [Full Sprint](./examples/full-sprint.md)
 - [Research Landscape](./examples/research-landscape.md)
-
-## Canonical Rule
-
-If a file under `docs/core` conflicts with an older file under `docs/patterns`,
-`docs/guides`, `docs/references`, or `docs/examples`, treat `docs/core` as
-canonical. The older paths remain only to avoid breaking links.

@@ -14,8 +14,10 @@ The full run uses roughly 30 agents: 10 research agents across 3 waves, a synthe
 agent, and 6 fix agents. The operator (your active session) drives every wave transition
 and writes every agent prompt.
 
-**Runtime assumption:** mixed-runtime-friendly example, but the discovery half
-assumes a runtime with dependable code or web scanning for the chosen questions.
+**Execution note:** This is a runtime-neutral example. The pattern and
+sequencing are the point here; the exact spawn, tool, and handoff mechanics
+depend on the runtime you choose. Use the matching adapter in
+[Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---
 
@@ -56,7 +58,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "What npm and pip dependencies are outdated or have known CVEs? Scan package.json, package-lock.json, requirements.txt, and Pipfile.lock.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["glob", "read_file"],
+      "tools": ["file_discovery", "file_reading"],
       "outputFormat": "structured_report",
       "model": "haiku"
     },
@@ -65,7 +67,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Are any secrets, API keys, tokens, or credentials hardcoded in source files, config files, or environment defaults? Scan all .js, .ts, .py, .env, .yaml, and .json files.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -74,7 +76,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Audit authentication and session management: JWT handling, session expiry, password hashing, account lockout, and token storage. Focus on src/auth/, src/middleware/, and any session config.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -83,7 +85,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Check for the OWASP Top 10 at a surface level: missing security headers, open CORS policy, missing CSRF protection, unprotected admin routes, and error messages leaking stack traces.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -92,7 +94,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Identify all SQL query construction sites in the Node.js and Python services. Flag any string interpolation or concatenation used to build queries. Focus on findings from T1 context about database access patterns.",
       "wave": 1,
       "blockedBy": ["T1", "T4"],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -101,7 +103,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Audit all API endpoints for missing authorization checks. For each route, verify that ownership and role checks exist before data access. Focus on routes surfaced as risky in T3 and T4.",
       "wave": 1,
       "blockedBy": ["T3", "T4"],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -110,7 +112,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Review data exposure: what user data fields are returned in API responses? Are passwords, tokens, internal IDs, or PII included in responses where they should not be? Check serializers, response builders, and GraphQL/REST schema.",
       "wave": 1,
       "blockedBy": ["T3", "T4"],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -119,7 +121,7 @@ decomposition of the audit into non-overlapping scopes.
       "question": "Cross-cutting synthesis: given the injection findings from T5, map each vulnerable call site to the endpoint that invokes it. Produce a complete attack surface list: endpoint -> vulnerable function -> raw input source.",
       "wave": 2,
       "blockedBy": ["T5", "T6"],
-      "tools": ["glob", "grep", "read_file"],
+      "tools": ["file_discovery", "repo_search", "file_reading"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -200,14 +202,14 @@ files, config files, or environment defaults?
 
 SCOPE: All .js, .ts, .py, .env, .yaml, .json files in the repository.
 
-TOOLS AVAILABLE: Glob, Grep, Read
+CAPABILITIES AVAILABLE: file discovery, repository search, file reading
 
 INSTRUCTIONS:
-1. Use Glob to locate all files matching the extensions above.
-2. Use Grep to search for patterns: "api_key", "secret", "password", "token",
+1. Find all files matching the extensions above.
+2. Search for patterns: "api_key", "secret", "password", "token",
    "private_key", "AWS_", "STRIPE_", base64-looking strings > 20 chars, hex strings
    > 32 chars.
-3. For each match, Read the surrounding context (10 lines) to determine if it is
+3. For each match, inspect the surrounding context (10 lines) to determine if it is
    a real credential vs. an example or environment variable reference.
 4. Flag only real or likely-real credentials. Skip "process.env.SECRET" and similar
    indirection patterns unless the fallback value is hardcoded.
@@ -475,7 +477,8 @@ RETURN:
 - Test pass/fail result
 ```
 
-All six workers fire in parallel with `run_in_background: true`.
+All six workers fire in parallel using the runtime's asynchronous worker-dispatch
+mechanism.
 
 ---
 

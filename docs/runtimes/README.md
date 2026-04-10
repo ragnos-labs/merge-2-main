@@ -8,14 +8,26 @@ description: Landing page for runtime-specific adapters and caveats.
 `docs/runtimes` maps the core methodology onto specific agent runtimes.
 
 Use these docs after you choose the pattern. The pattern stays universal. The
-runtime docs translate that pattern into real primitives, limits, and setup
-notes.
+runtime docs translate that pattern into real primitives, limits, setup notes,
+and failure modes.
 
-## Read In This Order
+## Choose A Runtime
+
+Use Claude Code when you want an interactive lead session with strong built-in
+agent ergonomics.
+
+Use Codex when you want explicit `AGENTS.md` contracts, role configs, or
+programmatic orchestration.
+
+Use OpenClaw when you want always-on or scheduled automation rather than a
+human-driven coding session.
+
+Then read in this order:
 
 1. Pick the pattern in [`../core`](../core/README.md)
 2. Choose the runtime that will execute it
-3. Verify any transient runtime behavior against the official source docs
+3. Read that runtime's primitives and limits before dispatching agents
+4. Verify any transient runtime behavior against the official source docs
 
 ## Runtime Surfaces
 

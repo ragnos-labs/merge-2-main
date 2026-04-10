@@ -8,14 +8,23 @@ description: Native Claude Code coordination primitives, strengths, and operatio
 Claude Code exposes the richest built-in coordination surface of the three
 documented runtimes.
 
-Primary primitives:
+## Primary Primitives
 
 - Background agent spawning
 - Team-style coordination and task lists
 - Inter-agent messaging
 - Integrated file, shell, and search tools
 
-Operational notes:
+## Execution Model
+
+- The human lead usually stays in the foreground session while child agents run
+  behind it.
+- Teams, tasks, and messages are native concepts rather than conventions built
+  on top of files.
+- Shared environment access makes coordination fast, but also makes file
+  ownership discipline more important.
+
+## Operational Limits
 
 - This is the most natural surface for interactive Hive Mind runs.
 - Parallel fan-out still needs decomposition discipline. A richer runtime does
@@ -23,7 +32,7 @@ Operational notes:
 - Runtime-specific ceilings and feature flags may change over time; keep those
   details in this folder rather than in the universal pattern docs.
 
-Routing guidance:
+## Routing Guidance
 
 - Choose Claude Code when the human lead wants direct session control.
 - Prefer it over OpenClaw for on-demand coding work.

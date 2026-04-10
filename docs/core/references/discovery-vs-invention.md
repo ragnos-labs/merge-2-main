@@ -1,18 +1,30 @@
 ---
 title: Discovery Vs Invention
-description: Placeholder for the debate over whether advanced AI systems are better framed as inventions, discoveries, or something messier.
+description: Early framing for the debate over whether advanced AI systems are better framed as inventions, discoveries, or something messier.
 ---
 
 ## Discovery Vs Invention
 
-This page is intentionally unfinished.
+This page exists because the framing question keeps sneaking back into the
+practical work.
 
 The point is to give the debate a home before it starts leaking sideways into
 guides that are supposed to stay practical.
 
-## What This Will Cover
+## Why The Framing Matters
 
-Future versions should explore:
+Different instincts follow from different metaphors. If a team thinks models are
+just software, it will reach for one set of controls. If it thinks they behave
+more like discovered systems with unstable surfaces, it will reach for another.
+
+The repo does not need to settle the ontology to admit that the framing affects:
+
+- risk appetite
+- accountability language
+- interface design
+- how much humility a workflow builds in
+
+## What A Finished Version Should Answer
 
 - what people mean when they say AI was "invented" versus "discovered"
 - which scientific analogies help and which ones just sound dramatic
@@ -28,5 +40,5 @@ Until this is filled in properly:
 - keep the bigger debate here, where it can mature without hijacking the rest
   of the repo
 
-Absurdist footnote: yes, this is a placeholder for arguing about the ontology
-of the weird machine we all opened by accident.
+Absurdist footnote: yes, this is the argument shelf for the weird machine we
+all opened by accident.

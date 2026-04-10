@@ -5,8 +5,9 @@ description: How the universal patterns map onto Codex primitives. Covers spawn 
 
 # Codex Pattern Adapters
 
-Codex is one runtime surface for the same four patterns (Patchwork, Worker
-Swarm, Research Swarm, Hive Mind). The patterns themselves do not change. What
+Codex is one runtime surface for the same core patterns: Patchwork, Worker
+Swarm, Research Swarm, Hive Mind, and Worktree Sprint as an isolation layer.
+The patterns themselves do not change. What
 changes is the coordination surface: instead of the Claude Code `Agent` tool,
 `TeamCreate`, `SendMessage`, and `run_in_background`, you use Codex-native
 primitives: `spawn_agent`, `send_input`, `wait`, and `close_agent`.
@@ -235,7 +236,7 @@ Never edit files. If tests fail, report exactly what failed and why.
 
 ---
 
-## Adapting Patchwork for Codex
+## Patchwork
 
 Patchwork is a single-session baseline: one agent, no spawning, no
 orchestration overhead. Use it when the change is fewer than 10 mechanical
@@ -272,7 +273,7 @@ sufficient.
 
 ---
 
-## Adapting Worker Swarm for Codex
+## Worker Swarm
 
 Worker Swarm in Claude Code fans out sub-agents via the Task tool with
 `run_in_background=true`. In Codex, the equivalent is spawning workers with
@@ -321,7 +322,7 @@ threads close.
 
 ---
 
-## Adapting Research Swarm for Codex
+## Research Swarm
 
 Research Swarm uses read-only explorers to scan the codebase before any
 implementation work starts. In Codex, explorers run with `sandbox_mode =
@@ -418,7 +419,7 @@ spawn_agents_on_csv(worker_csv)     # Wave 2: workers start from manifest
 
 ---
 
-## Adapting Hive Mind for Codex
+## Hive Mind
 
 Hive Mind in Claude Code uses `TeamCreate` to register durable named agents and
 `SendMessage` for cross-agent communication. Codex has no persistent TeamCreate
@@ -479,6 +480,30 @@ spawn_agent(role: "verifier", task: "<verify_request JSON>")
 wait(verifier_thread_id)
 send_input(orchestrator_thread, "<phase_complete JSON>")
 ```
+
+---
+
+## Worktree Sprint
+
+Treat Worktree Sprint as external git isolation layered underneath the Codex
+orchestration surface.
+
+**Flow:**
+
+1. Create the worktrees before spawning any lead or worker that will write.
+2. Pass each lead its assigned worktree path explicitly in the task payload.
+3. Keep worktree ownership aligned with the same no-file-overlap rules used for
+   non-worktree Codex runs.
+4. Consolidate through the orchestrator after verifier approval, not by letting
+   agents merge ad hoc.
+
+**Why it matters more in Codex than in shared-session runtimes:**
+
+- Sandboxes isolate agent context, but they do not remove merge risk.
+- Worktrees make workstream boundaries visible at the git layer, not just in
+  prompts and handoffs.
+- Long-running multi-workstream Codex runs are easier to recover when branch
+  and worktree ownership are explicit from the start.
 
 ---
 
@@ -854,7 +879,7 @@ token costs predictable and avoids context-window truncation on extended runs.
 
 ---
 
-## Limitations
+## When Not To Force This Runtime
 
 **Sandboxes are ephemeral.** Each agent starts from a fresh filesystem snapshot.
 Work must be committed to the repo before the agent closes. Uncommitted
