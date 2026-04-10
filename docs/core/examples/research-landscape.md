@@ -11,8 +11,9 @@ needs to evaluate vector databases before building a semantic search feature. Th
 have no prior internal knowledge of the space and want an evidence-based recommendation
 within a single working session.
 
-**Runtime assumption:** Claude Code or another runtime with reliable web research
-capabilities. Check the runtime surface docs before copying the execution flow.
+**Runtime assumption:** runtime-neutral example. You need a runtime that can do
+live web search and read the pages it finds. Check
+[Runtime Overview](../../runtimes/README.md) before copying the execution flow.
 
 ---
 
@@ -42,7 +43,8 @@ See [research-swarm.md](../patterns/research-swarm.md) for the full pattern refe
 
 Key properties of the Internet Research Swarm variant:
 
-- Agents use **WebSearch** and **WebFetch** (not file system tools).
+- Agents use live search and page-retrieval capabilities rather than local
+  file-system inspection.
 - The operator reviews all wave outputs before spawning the next wave.
 - Wave 0 runs immediately with no dependencies.
 - Wave 1 agents receive the most relevant wave 0 findings in their context.
@@ -64,7 +66,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What vector databases are available today (open-source and managed)? List the major options with a one-sentence description of each.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["WebSearch"],
+      "tools": ["live_search"],
       "outputFormat": "bullet_list",
       "model": "sonnet"
     },
@@ -73,7 +75,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What are the pricing models for the leading managed vector database services (Pinecone, Weaviate Cloud, Qdrant Cloud, Zilliz)? Capture tier names, cost per unit, and any free tier limits.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -82,7 +84,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What published performance benchmarks exist for vector databases in 2024-2026? Focus on queries per second (QPS) and recall at 1M and 10M vectors.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -91,7 +93,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What are the licensing terms for Qdrant, Weaviate, Chroma, Milvus, and pgvector? Identify any CLA requirements, source-available clauses, or enterprise-only features.",
       "wave": 0,
       "blockedBy": [],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "bullet_list",
       "model": "sonnet"
     },
@@ -100,7 +102,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "How does Qdrant handle horizontal scaling and replication? What are the cluster topology options and any known limitations at multi-million vector scale?",
       "wave": 1,
       "blockedBy": ["RQ-01", "RQ-03"],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -109,7 +111,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "How does Weaviate handle horizontal scaling and replication? What are the cluster topology options and any known limitations at multi-million vector scale?",
       "wave": 1,
       "blockedBy": ["RQ-01", "RQ-03"],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -118,7 +120,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What migration paths exist for teams currently using PostgreSQL with pgvector who want to move to a dedicated vector DB? What tooling, export formats, and re-indexing strategies are available?",
       "wave": 1,
       "blockedBy": ["RQ-01", "RQ-04"],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -127,7 +129,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "What Python SDK quality and community health metrics exist for Qdrant, Weaviate, Pinecone, and Chroma? Check PyPI download counts, GitHub stars, open issues, and last commit date.",
       "wave": 1,
       "blockedBy": ["RQ-01"],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -136,7 +138,7 @@ Stored at `.ai/research-batches/vector-db-eval-2026.json`.
       "question": "Verify these three claims independently: (1) Qdrant is Apache 2.0 licensed. (2) Pinecone's serverless tier is free up to 2GB storage. (3) Weaviate achieves >99% recall at 1M vectors with default HNSW settings.",
       "wave": 2,
       "blockedBy": ["RQ-02", "RQ-03", "RQ-04", "RQ-05", "RQ-06"],
-      "tools": ["WebSearch", "WebFetch"],
+      "tools": ["live_search", "page_retrieval"],
       "outputFormat": "structured_report",
       "model": "sonnet"
     },
@@ -185,15 +187,15 @@ Wave 2 (2 agents, sequential):
 +-------+-------+---------------------+---------+----------------------------+
 | ID    | Wave  | Type                | Model   | Tools                      |
 +-------+-------+---------------------+---------+----------------------------+
-| RQ-01 |   0   | Landscape inventory | sonnet  | WebSearch                  |
-| RQ-02 |   0   | Pricing             | sonnet  | WebSearch, WebFetch        |
-| RQ-03 |   0   | Benchmarks          | sonnet  | WebSearch, WebFetch        |
-| RQ-04 |   0   | Licensing           | sonnet  | WebSearch, WebFetch        |
-| RQ-05 |   1   | Qdrant scaling      | sonnet  | WebSearch, WebFetch        |
-| RQ-06 |   1   | Weaviate scaling    | sonnet  | WebSearch, WebFetch        |
-| RQ-07 |   1   | Migration paths     | sonnet  | WebSearch, WebFetch        |
-| RQ-08 |   1   | SDK health          | sonnet  | WebSearch, WebFetch        |
-| RQ-09 |   2   | Verification        | sonnet  | WebSearch, WebFetch        |
+| RQ-01 |   0   | Landscape inventory | sonnet  | live_search                |
+| RQ-02 |   0   | Pricing             | sonnet  | live_search, page_retrieval|
+| RQ-03 |   0   | Benchmarks          | sonnet  | live_search, page_retrieval|
+| RQ-04 |   0   | Licensing           | sonnet  | live_search, page_retrieval|
+| RQ-05 |   1   | Qdrant scaling      | sonnet  | live_search, page_retrieval|
+| RQ-06 |   1   | Weaviate scaling    | sonnet  | live_search, page_retrieval|
+| RQ-07 |   1   | Migration paths     | sonnet  | live_search, page_retrieval|
+| RQ-08 |   1   | SDK health          | sonnet  | live_search, page_retrieval|
+| RQ-09 |   2   | Verification        | sonnet  | live_search, page_retrieval|
 | RQ-10 |   2   | Synthesis           | opus    | (none, reasoning only)     |
 +-------+-------+---------------------+---------+----------------------------+
 ```
@@ -220,7 +222,7 @@ CONTEXT: No prior research. Start fresh. Cover both managed services and self-ho
 open-source options. Include at minimum: Pinecone, Weaviate, Qdrant, Chroma, Milvus,
 pgvector, Redis with vector support, and any significant 2025-2026 entrants.
 
-TOOLS AVAILABLE: WebSearch
+CAPABILITIES AVAILABLE: live web search
 
 INSTRUCTIONS:
 1. Run 2-3 web searches with varied phrasings (e.g., "vector database comparison 2026",
@@ -263,13 +265,13 @@ CONTEXT: No prior research. The team cares most about recall accuracy and query 
 at their expected scale (1M vectors initially, growing to ~10M over 2 years). Published
 benchmark studies are preferred over vendor marketing claims.
 
-TOOLS AVAILABLE: WebSearch, WebFetch
+CAPABILITIES AVAILABLE: live web search, page retrieval
 
 INSTRUCTIONS:
 1. Search for independent benchmark studies (not vendor-run). The ann-benchmarks.com
    project and academic papers are good primary sources.
-2. For any benchmark page found, use WebFetch to read the actual numbers rather than
-   summarizing from search snippets.
+2. For any benchmark page found, read the actual page rather than summarizing
+   from search snippets.
 3. Record: database name, dataset size, recall@10, QPS (p99 latency if available),
    hardware configuration used, and benchmark date.
 4. Flag vendor-published numbers with "(vendor)" so the synthesis agent can weight them
@@ -307,7 +309,7 @@ CLAIMS TO VERIFY:
 3. "Weaviate achieves >99% recall at 1M vectors with default HNSW settings"
    (Source: weaviate.io/blog/ann-benchmarks)
 
-TOOLS AVAILABLE: WebSearch, WebFetch
+CAPABILITIES AVAILABLE: live web search, page retrieval
 
 INSTRUCTIONS:
 1. For each claim, find a source DIFFERENT from the one listed above.
@@ -597,7 +599,7 @@ gap at 1M+ vectors).
 
 ## Methodology
 - 10 agents across 3 waves
-- Tools used: WebSearch, WebFetch
+- Tools used: live_search, page_retrieval
 - Cross-verification: 3/3 key claims checked; 1 confirmed, 1 partially confirmed,
   1 refuted (Weaviate recall at defaults)
 ```

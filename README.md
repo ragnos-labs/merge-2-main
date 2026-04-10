@@ -26,12 +26,10 @@ You get:
 
 Works with [Claude Code](https://code.claude.com/docs/en), [OpenAI
 Codex](https://openai.com/index/introducing-codex/), and
-[OpenClaw](https://openclaw.im/docs/start/setup). Our methodologies strive to be
-tool-agnostic; runtime specifics live in dedicated runtime docs.
+[OpenClaw](https://openclaw.im/docs/start/setup). The methodology stays
+tool-agnostic; runtime specifics live under `docs/runtimes`.
 
 Canonical docs live under `docs/core`, `docs/runtimes`, and `docs/templates`.
-Legacy top-level paths under `docs/patterns`, `docs/guides`,
-`docs/references`, and `docs/templates/*` are compatibility shims only.
 
 ## What This Repo Is Not
 
@@ -61,19 +59,25 @@ The patterns are about controlled coordination, not just more coordination.
 
 ## How To Use This Repo
 
-You do not need to read everything (but you probably should, but most of you won't. I mean, I wouldn't) 
-What would I do? Point my coding agent at the repo and ask it "what's legit? what's bogus? what should we consider folding into our ops?" Something like that. 
+You do not need to read everything (but you probably should, but most of you
+won't. I mean, I wouldn't). What would I do? Point my coding agent at the repo
+and ask it "what's legit? what's bogus? what should we consider folding into
+our ops?" Something like that.
 
-1. Pick the pattern first.
-2. Pick the runtime second.
-3. Pull the matching template, guide, or example third.
+Use this repo in one order:
+
+1. Choose the pattern.
+2. Choose the runtime.
+3. Choose the template.
+4. Review an example if you need the full flow.
 
 If you want the shortest path:
 
 - start with the [Decision Tree](docs/core/guides/decision-tree.md)
-- move to the matching runtime under [docs/runtimes](docs/runtimes/README.md)
-- grab a template from [docs/templates](docs/templates/README.md)
-- use examples only when you want to see the whole flow end to end
+- choose a runtime in [docs/runtimes](docs/runtimes/README.md)
+- grab the matching scaffold in [docs/templates](docs/templates/README.md)
+- use a worked example from [docs/core/examples](docs/core/README.md) only
+  when you want the whole flow end to end
 
 ## Push Back Early
 
