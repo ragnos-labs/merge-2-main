@@ -6,7 +6,7 @@ Patterns, guides, references, and templates for orchestrating 2 to 30+ AI
 agents on real software engineering tasks. This repo is documentation-only by
 design: a public methodology layer, not a framework, SDK, or hosted service.
 
-It is a clusterf*ck out there. Hope this helps.
+Agent work is chaotic right now. This is the field guide I wished existed when I started.
 
 ## What This Repo Is
 
