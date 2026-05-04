@@ -97,15 +97,72 @@ committing.
 
 Run the post-commit quality gate.
 
-The implementation is repo-specific, but the output should collapse to one of
-three states:
+The implementation is repo-specific, but the output collapses to one of three
+states:
 
 - `GO`: safe to publish
 - `WARN`: publishable, but call out degradations
 - `BLOCK`: fix and re-run the gate
 
-The key is not which scanner you use. The key is that the gate produces a
-clear, reviewable decision.
+### Decision tree
+
+```
+                        +-------------------+
+                        | All checks pass?  |
+                        +---------+---------+
+                                  |
+                  +---------------+---------------+
+                  |                               |
+                YES                              NO
+                  |                               |
+        +---------+---------+           +---------+---------+
+        | Any soft warnings? |           | Any blocking fail? |
+        +---------+---------+           +---------+---------+
+                  |                               |
+          +-------+-------+               +-------+-------+
+          |               |               |               |
+         NO              YES             YES              NO
+          |               |               |               |
+         GO             WARN            BLOCK         WARN (rare)
+```
+
+Soft warnings are findings that are tolerable to ship today but worth
+recording: declining test coverage, lint debt, slow performance regressions.
+Blocking fails are anything that would land a known broken state: failing
+tests, failing security scans, missing required artifacts.
+
+### Signed gate output
+
+Every gate decision should be a record, not a memory. Emit a structured
+artifact alongside the commit:
+
+```json
+{
+  "commit": "<sha>",
+  "gate": "GO | WARN | BLOCK",
+  "checks": [
+    {"name": "tests", "status": "pass", "evidence": "<test-log-path>"},
+    {"name": "lint", "status": "pass", "evidence": "<lint-log-path>"},
+    {"name": "secrets", "status": "pass", "evidence": "<scan-log-path>"}
+  ],
+  "warnings": [],
+  "decided_at": "<ISO-8601>",
+  "decider": "<agent-name or human>"
+}
+```
+
+Commit this artifact to the branch (or to a parallel evidence path) so the
+gate decision survives review. A gate that runs and is forgotten is a gate
+that did not run.
+
+### Per-phase anti-patterns
+
+| Anti-pattern | Why it fails | Correct behavior |
+|--------------|--------------|------------------|
+| Gate run with the same commit twice without diff | Earlier WARN can mutate to GO without anything changing | Re-run only if the commit or the gate config changed |
+| Gate output that names no evidence files | Decision is unverifiable post-hoc | Every check entry includes an evidence pointer |
+| BLOCK swallowed and treated as WARN | Known-broken state ships | BLOCK is terminal until the failing check passes; no override |
+| Gate decision held in chat instead of a file | Lost the moment the session ends | Persist the artifact alongside the commit |
 
 ## Phase 5: Publish
 

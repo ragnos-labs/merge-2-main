@@ -61,9 +61,9 @@ Agents working on this repo must follow these rules on every task.
    must not edit the same file. Claim a file before writing to it. Resolve
    conflicts at the planning step, not at merge time.
 
-6. **Respect the voice boundary.** Placeholder docs, ecosystem pages, and the
-   root README may carry light personality. Core guides, references,
-   templates, and examples stay plain, technical, and low-sass.
+6. **Respect the voice boundary.** The root README and other top-level
+   project files may carry a light dry edge. Every doc under `docs/` stays
+   plain, technical, and low-sass.
 
 7. **Run the repo gate before handoff.** Use `just tool` before opening or
    updating a PR. The matching GitHub check is `docs-hygiene`.
@@ -103,11 +103,11 @@ Do not commit immediately after writing. The re-read step is mandatory.
 </verification_loop>
 
 <voice_boundary>
-Use humor sparingly and only on border surfaces such as README-adjacent docs,
-ecosystem pages, and explicit placeholders. When writing methodology docs,
-references, templates, and examples, keep the tone direct, technical, and
-informational. Character is allowed at the edge of the repo, not in the middle
-of the operating manual.
+Border surfaces (root README and other top-level project files) may carry a
+light dry edge used sparingly. Every doc under `docs/` is a core surface and
+stays direct, technical, and informational. No humor, no character performance,
+no rhetorical flourishes inside the operating manual. If a doc is teaching
+process, review, safety, or governance, write it clean and sober.
 </voice_boundary>
 
 ---

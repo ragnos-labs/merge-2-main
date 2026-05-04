@@ -76,19 +76,9 @@ Reusable contracts, schemas, and source maps:
 - [Retrospective Template](./references/retrospective-template.md)
 - [Drift Detection](./references/drift-detection.md)
 - [Positive Enforcement](./references/positive-enforcement.md)
-- [Ecosystem Radar](./references/ecosystem-radar.md)
 - [Stack And Teams We Respect](./references/stack-and-teams-we-respect.md)
 - [Security Tooling Starting Points](./references/security-tooling-starting-points.md)
 - [Ecosystem Source Map](./references/ecosystem-source-map.md)
-- [AI Philosophy And Implications](./references/ai-philosophy-and-implications.md)
-- [Discovery Vs Invention](./references/discovery-vs-invention.md)
-
-### Additional Guides
-
-Related guidance that is still narrower than the core starting path:
-
-- [How We Work At RAGnos](./guides/how-we-work-at-ragnos.md)
-- [Character Layer](./guides/character-layer.md)
 
 ### Examples
 

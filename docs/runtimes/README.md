@@ -52,6 +52,21 @@ Then read in this order:
 - [Pattern Adapters](./openclaw/pattern-adapters.md)
 - [Bedrock Gotchas](./openclaw/bedrock-gotchas.md)
 
+## Adapter Maturity
+
+Not all three adapters are equally fleshed out. Be honest about the state:
+
+- **Claude Code** is the reference runtime and receives the most active
+  updates. Use it as the canonical example when learning the methodology.
+- **Codex** has the deepest setup documentation (`AGENTS.md`, role configs,
+  programmatic API). Mature enough to ship from.
+- **OpenClaw** coverage is intentionally lighter. Pattern adapter notes are
+  short. Suitable for ambient or daemon-style work; verify any specific claim
+  against the vendor docs before relying on it.
+
+If you find a gap, open an issue or send a PR. This section will get more
+even as runtime coverage grows.
+
 ## Freshness Rule
 
 Runtime docs age faster than core methodology docs.
