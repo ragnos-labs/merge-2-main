@@ -217,6 +217,33 @@ than model quality. Managing the budget is an operational discipline, not an aft
 
 ---
 
+## Enforcement: Hooks Beat Hopes
+
+The guidance in this document is only as good as your enforcement of it. In a single
+session you can self-discipline. Across a 30-agent run, "default to standard, escalate
+sparingly" drifts the moment one prompt forgets to specify a tier and the runtime fills
+in its own default.
+
+Two enforcement surfaces matter:
+
+- **Declared role defaults**: where the runtime supports per-role configuration (named
+  subagent definitions, agent profiles, etc.), pin tier and effort at the role level so
+  individual prompts inherit the right defaults instead of restating them.
+- **Pre-spawn guardrails**: a hook or wrapper that inspects every agent spawn before it
+  runs. Reject spawns that omit a tier pin. Reject most-capable-tier spawns that lack an
+  explicit justification token (for example, a `[JUSTIFIED: <reason>]` marker the lead
+  must add). Allow override via an environment flag for the rare legitimate case.
+
+The pattern is: **declare role defaults, then guard the escape hatches.** Without role
+defaults, every prompt repeats the same tier specification and one omission silently
+escalates cost. Without a guardrail, the lead can quietly upgrade tiers under pressure
+and nothing in the artifact trail records why.
+
+Runtime-specific implementations of these enforcement surfaces (subagent files, hook
+formats, environment flags) live under `docs/runtimes/`.
+
+---
+
 ## Runtime Surface Notes
 
 Model tiers remain universal, but the runtime surface changes the tool budget,

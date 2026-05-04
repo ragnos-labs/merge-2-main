@@ -14,6 +14,17 @@ documented runtimes.
 - Team-style coordination and task lists
 - Inter-agent messaging
 - Integrated file, shell, and search tools
+- Subagent definitions: per-role markdown files under `.claude/agents/` with
+  YAML frontmatter that pins `model:`, tools, and a description. Spawns that
+  reference a subagent name inherit the role's model pin without restating it.
+- Pre-tool-use hooks: shell scripts wired in `.claude/settings.json` that
+  inspect every tool invocation (including `Agent` spawns) before it runs. The
+  hook can read the call's JSON payload, reject the call with a non-zero exit,
+  and write a reason that the lead sees in-session.
+
+These last two are the surfaces that operationalize the universal model
+selection guide. Subagent definitions are the "declared role defaults" layer;
+pre-tool-use hooks are the "pre-spawn guardrails" layer.
 
 ## Execution Model
 
