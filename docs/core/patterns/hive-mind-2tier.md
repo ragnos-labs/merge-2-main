@@ -392,6 +392,19 @@ agent color conventions:
 - BLUE: implementation (owns source files, writes code)
 - PINK: planning and documentation (owns docs, writes stubs, coordinates design)
 - RED: adversarial testing and security review
+- GREEN: human approver (no code authorship; signs off at checkpoints)
+
+GREEN is the human in the loop. The role exists explicitly so that approval, redirect,
+and abort authority is named instead of implied. GREEN does not author code mid-phase
+and does not claim teammate tasks; their surface is the checkpoint block. Phase 6's
+operator-review checkpoint is the canonical GREEN interaction point.
+
+Rights: proceed, redirect, or abort at any checkpoint. May intervene out-of-band on
+blockers the Lead surfaces.
+
+Limits: does not touch owned files, does not author tests or docs as part of the
+sprint, does not bypass phase gates. If GREEN wants a code change, it goes through a
+teammate.
 
 In a 5-agent team, a common assignment pattern is:
 
@@ -479,6 +492,31 @@ message(
 - Stop immediately and message the Lead when blocked
 - Do not fix bugs without Lead approval (to avoid bypassing phase gates)
 - Do not touch files outside your ownership list without Lead authorization
+
+### Deferred Findings: the [DEFERRED-FIX] marker
+
+Teammates routinely notice problems outside their ownership list. The "Silent Fix
+Drift" anti-pattern blocks them from fixing those problems mid-phase. But silently
+forgetting them is just as bad: real findings vanish.
+
+The convention: drop a `[DEFERRED-FIX]` marker. One line, in the meta-log or in a
+code comment near the finding, with enough context to triage later.
+
+```
+[DEFERRED-FIX] config/db.py:42 - connection pool size hardcoded; should read from env
+[DEFERRED-FIX] tests/test_auth.py:88 - flaky on slow CI; needs deterministic clock
+```
+
+Rules:
+
+- Markers are findings, not commits. They surface a problem; they do not fix it.
+- A marker dropped in code is a comment; in the meta-log it is a structured entry.
+- The Lead sweeps markers at Phase 7 (Debug) entry. Each one becomes a triage
+  decision: fix in this sprint, log as backlog, or close as not-real.
+- Markers do not bypass phase gates. They are a way to remember things, not to act
+  on them.
+
+`grep -rn '\[DEFERRED-FIX\]'` is the standard sweep command at Phase 7.
 
 ---
 
