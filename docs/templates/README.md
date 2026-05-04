@@ -19,10 +19,14 @@ Read in this order:
 
 ## Universal Templates
 
-- [Build Spec](./universal/build-spec.json)
-- [Research Manifest](./universal/research-manifest.json)
-- [Orchestrator Prompt](./universal/orchestrator-prompt.md)
-- [Scribe Prompt](./universal/scribe-prompt.md)
+- [Build Spec](./universal/build-spec.json): the per-sprint build plan format
+- [Research Manifest](./universal/research-manifest.json): discovery-wave manifest for Research Swarms
+- [Orchestrator Prompt](./universal/orchestrator-prompt.md): standing prompt for the top-tier coordinator
+- [Scribe Prompt](./universal/scribe-prompt.md): standing prompt for the meta-log writer
+- [Subagent Definition](./universal/subagent-definition.md): declared role default with model pin and tool surface
+- [Spawn-Guard Hook](./universal/spawn-guard-hook.md): pre-spawn validation script; rejects unpinned or unjustified spawns
+- [Meta-Log Entry Schema](./universal/meta-log-entry-schema.md): JSONL field set with self-heal extension and sample entries
+- [Scratchpad Entries](./universal/scratchpad-entries.md): worked example of a workstream scratchpad JSONL
 
 ## Codex Templates
 

@@ -232,6 +232,37 @@ file (a config file, a types file, an index barrel), coordinate in one of these 
 
 ## Cleanup
 
+### Preserve gitignored content first
+
+A worktree usually holds files that never reach the sprint branch: secure docs,
+screenshots, scratchpad files beyond the JSONL, env files, in-flight notes. `git
+worktree remove` deletes all of them. This is the most common silent data-loss path
+in worktree sprints, and it has caught teams who assumed the work was "all in git."
+
+Run a hold step before any removal:
+
+1. List gitignored content in the worktree:
+
+   ```bash
+   git -C <worktree-path> ls-files --others --exclude-standard
+   ```
+
+2. Copy anything of value back to the main checkout or to an archive path:
+
+   ```bash
+   rsync -a --exclude '.git/' \
+     <worktree-path>/docs/secure/ <main-checkout>/docs/secure/
+   ```
+
+   Repeat for any other ignored paths the team treats as durable (`tmp/`, `.env*`,
+   workstream scratchpads, screenshots, draft notes).
+
+3. Verify the worktree has no uncommitted source changes (`git status` clean).
+
+Only after the hold step is complete should removal run.
+
+### Remove the worktrees
+
 After the sprint branch has been merged to its target:
 
 ```bash

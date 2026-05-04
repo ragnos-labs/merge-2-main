@@ -78,6 +78,66 @@ Evidence pointers can be:
 - generated artifacts
 - links to relevant docs
 
+## Self-Heal Candidates
+
+The meta-log is most valuable when it does more than record what happened. With one
+extra field, it becomes an active improvement signal: a stream of issues the system
+itself has already noticed and proposed a fix for.
+
+When a meta-log entry describes a failure, retry, or surprise, flag it as a self-heal
+candidate:
+
+```json
+{
+  "ts": "2026-04-18T14:31:22Z",
+  "actor": "lead",
+  "phase": "G2",
+  "summary": "Bee B2 failed to apply patch: file owned by another workstream",
+  "evidence": "scratchpad-ws-b.jsonl:14",
+  "self_heal_candidate": true,
+  "remediation": "tighten Phase 0 ownership map; reject cross-workstream writes at spawn time"
+}
+```
+
+`self_heal_candidate: true` marks the entry for review. `remediation` is a one-line
+proposed fix. Together they turn an evidence pointer into a candidate work item.
+
+### Promotion thresholds
+
+Not every flagged candidate deserves a fix. Three thresholds keep the signal-to-noise
+ratio honest:
+
+```
++--------------------------+----------------------+----------------------------------+
+| Recurrence rate          | Action               | Rationale                        |
++--------------------------+----------------------+----------------------------------+
+| > 25% of runs            | Fix now              | The system is broken on this     |
+|                          |                      | path; further runs waste effort  |
++--------------------------+----------------------+----------------------------------+
+| 3+ recurrences           | Promote to backlog   | Pattern is real but tolerable;   |
+| (any rate)               |                      | schedule the fix deliberately    |
++--------------------------+----------------------+----------------------------------+
+| < 3 recurrences          | Log only             | One-offs are noise; revisit if   |
+|                          |                      | the count climbs                 |
++--------------------------+----------------------+----------------------------------+
+```
+
+Apply the rate threshold to repeated runs of the same operation (a sprint that runs
+weekly, a CI job that fires per PR). Apply the count threshold to anything with low
+volume.
+
+### Routing
+
+Self-heal candidates that promote to backlog should land in a separate list or queue
+from human-curated work, not the main backlog. Mixing them dilutes the curated
+backlog and makes triage slower. The promotion step is the routing decision: human
+review confirms the candidate, then routes it to the maintenance queue.
+
+The meta-log-entry-schema template documents the field set and shows additional
+sample entries: see `docs/templates/meta-log-entry-schema.md`.
+
+---
+
 ## Scope Changes Must Be Visible
 
 If the plan changes, the meta-log should say so.

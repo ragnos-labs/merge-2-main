@@ -92,6 +92,24 @@ private to their Lead: they do not communicate with the Orchestrator, with other
 Leads, or with Bees in other workstreams. Their output flows up through their
 parent Lead only.
 
+### GREEN: the human approver
+
+A fourth color sits above the Orchestrator: GREEN, the human approver. GREEN does
+not appear in the tier diagram because they are not a coordination tier; they are an
+authority surface the Orchestrator presents structured checkpoints to.
+
+GREEN's rights: proceed, redirect, or abort at any checkpoint (Phases 5 and 8 are the
+canonical gates). May intervene out-of-band when the Orchestrator surfaces a blocker
+that requires a judgment call.
+
+GREEN's limits: does not author code, does not claim Bee tasks, does not modify the
+sprint state file. If GREEN wants a code change, it goes through the Orchestrator,
+who routes it to a workstream Lead.
+
+Naming the human role explicitly prevents the most common 3-tier failure mode at
+scale: an Orchestrator that drifts because no one is watching, or a human reviewer
+who steps in mid-phase and breaks file ownership.
+
 ---
 
 ## Model Selection Across Tiers
@@ -481,6 +499,24 @@ to resolve them.
 
 **Final merge.** After Phase 9, the Orchestrator merges `sprint/<slug>` into
 `main` (or the target branch) and removes the worktrees and workstream branches.
+
+**Cleanup hold: preserve gitignored content first.** A worktree typically holds files
+that never reach the sprint branch: secure docs, screenshots, scratchpad files past
+the JSONL, in-flight notes, env files. `git worktree remove` deletes them. The fix is
+a deliberate hold step before removal:
+
+1. Walk each worktree and copy gitignored content of value back to the main checkout
+   (or to an archive path the team uses).
+2. Confirm the worktree contains no uncommitted source changes (`git status` clean).
+3. Only then run `git worktree remove`.
+
+A reasonable default ignore-list to copy back: `docs/secure/`, `tmp/`, `.env*`,
+`scratchpad-*.jsonl`, anything matched by `git ls-files --others --exclude-standard`
+in the worktree.
+
+This is the most common silent data-loss path in worktree-based sprints. Add the hold
+step to any cleanup automation; do not remove worktrees as a side effect of the
+final merge.
 
 ---
 
