@@ -78,7 +78,7 @@ A minimal TDD contract includes:
 - Any integration checkpoints (component wires together correctly with its dependencies)
 - The gate criteria that must be met before the task is closed
 
-Example contract section in a task spec:
+Prose form, when a structured schema is overkill:
 
 ```
 ## TDD Contract
@@ -95,6 +95,11 @@ Integration: Config object is accepted by `initialize_app(config: Config)` witho
 
 Gate: All behaviors above have passing tests. `pytest -x` exits 0.
 ```
+
+For multi-agent runs, prefer the structured YAML schema. The schema is parseable, which lets a CI
+step run the gate commands automatically and block phase advancement when a gate fails. See
+[../../templates/universal/test-contract.md](../../templates/universal/test-contract.md) for the
+schema, a worked example, and a reference shell snippet.
 
 The agent receiving this task writes tests for each listed behavior before touching production code.
 
