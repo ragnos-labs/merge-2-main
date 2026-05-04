@@ -27,6 +27,7 @@ Read in this order:
 - [Spawn-Guard Hook](./universal/spawn-guard-hook.md): pre-spawn validation script; rejects unpinned or unjustified spawns
 - [Meta-Log Entry Schema](./universal/meta-log-entry-schema.md): JSONL field set with self-heal extension and sample entries
 - [Scratchpad Entries](./universal/scratchpad-entries.md): worked example of a workstream scratchpad JSONL
+- [Test Contract](./universal/test-contract.md): YAML schema for per-task TDD contracts; parseable by CI
 
 ## Codex Templates
 

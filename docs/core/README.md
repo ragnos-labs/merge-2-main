@@ -79,6 +79,8 @@ Reusable contracts, schemas, and source maps:
 - [Stack And Teams We Respect](./references/stack-and-teams-we-respect.md)
 - [Security Tooling Starting Points](./references/security-tooling-starting-points.md)
 - [Ecosystem Source Map](./references/ecosystem-source-map.md)
+- [Sprint State File Schema](./references/sprint-state-file-schema.md)
+- [Spawn-Guard Hooks](./references/spawn-guard-hooks.md)
 
 ### Examples
 

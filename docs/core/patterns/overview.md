@@ -281,6 +281,83 @@ Full model selection guidance: [../guides/model-selection.md](../guides/model-se
 
 ---
 
+## Cost Lens: What Each Pattern Actually Spends
+
+Every pattern in this guide is a deliberate cost decision. Numbers below are
+order-of-magnitude estimates calibrated against typical 2026-era frontier
+pricing. They are not predictions; they are bounds for sizing a sprint before
+you commit to spawning anything.
+
+### Per-pattern token and cost ranges
+
+These ranges assume a moderate-complexity sprint per pattern (the common
+shape, not the extremes). All values exclude the human reviewer's reading time.
+
+```
++--------------------+----------+----------+----------------------------+
+| Pattern            | Tokens   | Wall     | Notes                      |
+|                    | (in+out, | clock    |                            |
+|                    | total)   | (median) |                            |
++--------------------+----------+----------+----------------------------+
+| Patchwork          |    50K - |   2 -    | Single agent, no overhead  |
+|                    |   200K   |  10 min  |                            |
++--------------------+----------+----------+----------------------------+
+| Worker Swarm       |   400K - |  10 -    | Lead + 4-12 workers; lead  |
+|                    |   2M     |  45 min  | dominates the lead-token   |
+|                    |          |          | bill                       |
++--------------------+----------+----------+----------------------------+
+| Research Swarm     |   600K - |  15 -    | Scanners cheap, synthesis  |
+|                    |   3M     |  60 min  | expensive; cost lives in   |
+|                    |          |          | the wave-N analysis pass   |
++--------------------+----------+----------+----------------------------+
+| Hive Mind 2-tier   |   1.5M - |  30 -    | Persistent teammates carry |
+|                    |   5M     |  90 min  | state across phases; high  |
+|                    |          |          | per-agent token volume     |
++--------------------+----------+----------+----------------------------+
+| Hive Mind 3-tier   |    5M -  |   1 -    | Orchestrator + leads + 15- |
+|                    |   25M    |   4 hr   | 30 bees; bee count drives  |
+|                    |          |          | the bill                   |
++--------------------+----------+----------+----------------------------+
+```
+
+### Where the cost goes
+
+The dominant cost driver is not the same across patterns:
+
+- **Patchwork**: total cost is capped by one agent's context window. Cost is
+  predictable; failure mode is hitting the window, not the bill.
+- **Worker Swarm**: the lead agent's prompts and synthesis dominate. Workers
+  are cheap individually; the lead is expensive proportionally.
+- **Research Swarm**: scanners (fast tier) are negligible. The synthesis agent
+  at wave end is where the cost concentrates. Expect the last 10% of the run
+  to consume 40-60% of tokens.
+- **Hive Mind 2-tier**: persistence is the cost. Teammates that hold context
+  across nine phases re-read state on every transition. Compress phase summaries
+  ruthlessly; an uncompressed sprint can double the token bill.
+- **Hive Mind 3-tier**: bee count compounds quickly. 20 bees at standard tier
+  through three implementation waves is a different price point from 20 bees
+  through one wave. Most of the cost discipline lives in wave count, not tier
+  selection.
+
+### Cost levers that work
+
+Three levers reliably reduce cost without reducing output quality:
+
+1. **Drop effort, not tier.** Standard-tier at low effort runs roughly half
+   the price of standard-tier at high effort. This is almost always the right
+   first knob to turn.
+2. **Compress handoff context.** A lead that re-passes the full prior phase
+   output to the next phase pays for that text on every call. Synthesize down
+   to one paragraph plus pointers and keep the shape stable.
+3. **Use fast tier for unambiguous tasks only.** Scanners, file lookups,
+   classifications. Anywhere there is judgment, fast tier is a false economy
+   (retry cost dominates).
+
+Full reasoning behind these ranges and the cost levers is in
+[../guides/model-selection.md](../guides/model-selection.md).
+
+---
+
 ## Pre-Launch Checklist (Patterns 2-4)
 
 Before spawning agents for any multi-agent run, verify:

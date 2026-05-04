@@ -174,6 +174,84 @@ Draw the graph before finalizing the plan. If you find that every workstream dep
 every other, the boundaries are wrong: the work is not actually parallel. Redesign the
 interfaces so workstreams can proceed independently.
 
+### Dependency resolution algorithm
+
+A `blocked_by` field is a directed edge in a workstream graph. Before
+spawning, run three checks: cycles, parallelism, and ownership conflicts.
+
+**Cycle detection (topological sort).** A valid plan is a directed acyclic
+graph. If A blocks B, B blocks C, and C blocks A, no valid execution order
+exists. Run a topological sort over the workstream graph. If the sort fails,
+print the cycle and stop.
+
+```python
+# Pseudocode for cycle detection via Kahn's algorithm.
+in_degree = {ws.id: 0 for ws in workstreams}
+graph = {ws.id: [] for ws in workstreams}
+for ws in workstreams:
+    for blocker in ws.blocked_by:
+        graph[blocker].append(ws.id)
+        in_degree[ws.id] += 1
+
+queue = [ws_id for ws_id, deg in in_degree.items() if deg == 0]
+sorted_order = []
+while queue:
+    node = queue.pop(0)
+    sorted_order.append(node)
+    for neighbor in graph[node]:
+        in_degree[neighbor] -= 1
+        if in_degree[neighbor] == 0:
+            queue.append(neighbor)
+
+if len(sorted_order) != len(workstreams):
+    cycle_members = [ws_id for ws_id, deg in in_degree.items() if deg > 0]
+    raise PlanError(f"cycle detected among: {cycle_members}")
+```
+
+The same shape works in any language. The key invariant: every node lands
+in `sorted_order` exactly once. A shorter `sorted_order` is the cycle
+signature.
+
+**Parallelism wave grouping.** After the topological sort, group the result
+into waves: workstreams that share zero dependency-distance can run together.
+
+```
+Wave 0 (in_degree == 0): WS-A, WS-B, WS-C    --> run in parallel
+Wave 1 (depend on Wave 0 only): WS-D          --> waits, then runs
+Wave 2 (depend on Wave 1 only): WS-E          --> waits, then runs
+```
+
+If every workstream lands in its own wave, the plan is sequential and the
+multi-agent overhead is wasted. Aim for 50%+ of workstreams in Wave 0.
+
+**Ownership conflict check.** Every file appears in exactly one workstream's
+`critical_files` list. Run a flat scan:
+
+```python
+seen = {}
+for ws in workstreams:
+    for path in ws.critical_files:
+        if path in seen:
+            raise PlanError(f"{path} owned by both {seen[path]} and {ws.id}")
+        seen[path] = ws.id
+```
+
+Shared-file declarations (`read_only_for`) are a separate list and do not
+conflict with `critical_files`.
+
+### Validation checklist
+
+Before finalizing the plan, run all three checks and confirm:
+
+- [ ] Topological sort succeeds (no cycles)
+- [ ] At least 50% of workstreams land in Wave 0 (parallelism is real)
+- [ ] No file appears in two `critical_files` lists
+- [ ] Every shared file has exactly one owner declared
+- [ ] Every `blocked_by` reference points to an existing workstream id
+
+A plan that fails any of these is not ready to spawn. Fix it before the
+design approval gate.
+
 Common dependency patterns:
 
 - Interface-first: one workstream defines a shared interface (types, API contract) and all
