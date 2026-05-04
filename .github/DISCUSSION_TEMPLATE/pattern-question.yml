@@ -1,0 +1,33 @@
+title: "[Pattern Question] "
+labels: ["pattern-question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for "is this the right pattern for X?" questions, or for
+        clarifying how a pattern's rules apply to your specific situation.
+        For confirmed bugs in the docs, file an Issue instead.
+
+  - type: textarea
+    id: situation
+    attributes:
+      label: What are you trying to do?
+      description: Describe the work. Scope, file count, novelty, constraints. The more concrete, the better the answer you will get.
+    validations:
+      required: true
+
+  - type: textarea
+    id: candidates
+    attributes:
+      label: Which patterns are you considering?
+      description: List the patterns you have already weighed and what made you uncertain. Saying "I read the Decision Tree and got stuck at step 3" is fine.
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What is the specific question?
+      description: One sentence is ideal.
+    validations:
+      required: true

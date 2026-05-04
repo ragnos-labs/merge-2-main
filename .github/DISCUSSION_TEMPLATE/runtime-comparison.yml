@@ -1,0 +1,42 @@
+title: "[Runtime] "
+labels: ["runtime-comparison"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Comparing how the same pattern behaves across runtimes (Claude Code,
+        Codex, OpenClaw, others). These threads are how the runtime adapter
+        docs improve. Specific differences with reproducible setup beat
+        generic preferences.
+
+  - type: input
+    id: pattern
+    attributes:
+      label: Pattern
+      description: Which pattern were you running?
+    validations:
+      required: true
+
+  - type: textarea
+    id: runtimes
+    attributes:
+      label: Runtimes compared
+      description: Which runtimes did you run this on, and at what model tier? Brief setup notes (effort level, tool surface) help.
+    validations:
+      required: true
+
+  - type: textarea
+    id: differences
+    attributes:
+      label: Where did they diverge?
+      description: Name the specific behaviors that differed. "Codex was faster" is less useful than "Codex spawned in 2s vs Claude Code's 0.4s; both completed the same task in roughly the same total wall time."
+    validations:
+      required: true
+
+  - type: textarea
+    id: takeaway
+    attributes:
+      label: What does this tell us about the adapter docs?
+      description: Optional. Where could the runtime adapter doc be sharper?
+    validations:
+      required: false

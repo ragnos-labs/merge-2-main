@@ -1,0 +1,34 @@
+title: "[Gap] "
+labels: ["gap-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Did you hit something this guide does not cover, or covers in a way
+        that does not match real practice? Surface it here. Gap discussions
+        often turn into PRs; not every one needs to. Sometimes the right
+        outcome is "this is intentionally out of scope."
+
+  - type: textarea
+    id: gap
+    attributes:
+      label: What is missing or wrong?
+      description: One paragraph. Name a doc, a section, or an unaddressed scenario.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How did you discover the gap?
+      description: A failed run, a confused teammate, a contradiction between docs, an external comparison. Concrete is better than abstract.
+    validations:
+      required: true
+
+  - type: textarea
+    id: shape
+    attributes:
+      label: What might fill the gap?
+      description: Optional. A new doc, a new section, a template, a worked example, a deletion. Leave blank if you want to discuss before proposing a shape.
+    validations:
+      required: false
