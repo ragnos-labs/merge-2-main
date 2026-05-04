@@ -91,7 +91,7 @@ guide for escalation criteria.
 
 - One source of truth per role. Tier pins, tool surfaces, and standing instructions
   live next to each other and travel together.
-- Spawn prompts shrink. The lead writes "spawn explore-standard with task: <task>"
+- Spawn prompts shrink. The lead writes `spawn explore-standard with task: {task}`
   instead of restating the role every time.
 - The pre-spawn guardrail (`docs/templates/universal/spawn-guard-hook.md`) can
   reject spawns that omit a model pin. With named roles, that rejection turns into
