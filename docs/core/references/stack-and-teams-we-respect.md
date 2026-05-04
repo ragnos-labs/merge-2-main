@@ -183,5 +183,5 @@ Good additions to this page should be:
 - explainable in one short paragraph of real value
 
 If the project is merely interesting, but not obviously tied to the operating
-goals of this repo, it probably belongs in
-[Ecosystem Radar](./ecosystem-radar.md) instead.
+goals of this repo, leave it out. This list is for projects whose value is
+explainable in one paragraph; everything else is noise.

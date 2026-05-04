@@ -12,6 +12,19 @@ coordination.
   for bugs, unclear docs, or suggestions
 - Include which document is affected and what is confusing or incorrect
 
+### Sharing War Stories and Asking Questions
+
+[GitHub Discussions](https://github.com/ragnos-labs/merge-2-main/discussions)
+is the right surface when you want to:
+
+- share a war story from a real sprint that ran one of these patterns
+- propose a gap or a missing pattern before drafting a PR
+- compare runtime experiences (Claude Code vs. Codex vs. OpenClaw)
+- ask "is this the right pattern for X?" without filing it as a bug
+
+Issues are for things to fix; Discussions are for the narrative around the
+methodology. Both feed back into future doc updates.
+
 ### Submitting Changes
 
 1. Fork the repository
@@ -59,27 +72,22 @@ the status check to require on `main`.
 
 ## Voice Boundaries
 
-This repo allows a small amount of personality, but not everywhere.
+This repo allows a small amount of personality, but only at the borders.
 
-Use a clear tone split:
+Two surfaces, one rule:
 
-- **Business surfaces**: guides, references, templates, examples, and any doc
-  making durable methodology claims should stay direct, technical, and low-sass
-- **Border surfaces**: the root README, ecosystem pages, placeholder docs, and
-  "work in progress" stubs may carry light commentary, dry humor, or a little
-  Mr. CLI energy
+- **Core surfaces**: every pattern doc, guide, reference, template, and worked
+  example. Direct, technical, low-sass. No personality.
+- **Border surfaces**: the root README and the project's other top-level files.
+  Light dry edge is fine here, never elsewhere.
 
 Rules:
 
-- keep humor brief and intentional
-- do not let jokes obscure instructions, claims, or warnings
+- keep any humor brief and intentional
+- do not let phrasing obscure instructions, claims, or warnings
 - do not turn core methodology docs into character performance
 - if a doc is teaching process, review, safety, or governance, write it clean
   and sober
-
-If you use humor for border surfaces, prefer the repo's current dry edge over
-random internet snark. The reference energy is closer to "useful operator with a
-raised eyebrow" than "bit account with a keyboard."
 
 ## Sourcing And Attribution
 

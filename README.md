@@ -8,6 +8,20 @@ design: a public methodology layer, not a framework, SDK, or hosted service.
 
 Agent work is chaotic right now. This is the field guide I wished existed when I started.
 
+Patterns battle-tested across multiple production agent fleets, distilled into
+a methodology layer anyone can adopt or argue with.
+
+## Start Here
+
+Three minutes to a working pattern:
+
+1. Open the [Decision Tree](docs/core/guides/decision-tree.md). Pick a pattern.
+2. Open the matching [runtime](docs/runtimes/README.md). Pick a surface.
+3. Grab a [template](docs/templates/README.md). Run it.
+
+Or skim the [Quick Win](#quick-win-patchwork-in-90-seconds) below to see a
+single-agent pattern in action without leaving this page.
+
 ## What This Repo Is
 
 A source-backed methodology library for agentic software work. The goal is to
@@ -124,6 +138,33 @@ Answer these questions in order. Stop at the first "yes."
 Need file isolation between workstreams? Add the **Worktree Sprint** layer on
 top of any pattern.
 
+## Quick Win: Patchwork in 90 Seconds
+
+The simplest pattern in this guide is Patchwork: one agent, one bounded task,
+no coordination. Drop this prompt into your runtime of choice and see the
+whole loop in under two minutes.
+
+```text
+Task: rename the function `getUserData` to `fetchUserProfile` everywhere it
+appears in this repository, including all call sites and test files. Update
+docstrings and comments that reference the old name. Do not touch unrelated
+code.
+
+Constraints:
+- Stop if you find any name collision (an existing `fetchUserProfile`).
+- Report the file count touched and any places you skipped.
+
+Done when:
+- All references renamed.
+- Tests pass.
+- A one-paragraph summary is returned: files touched, anything skipped, and
+  any surprises.
+```
+
+That is the entire Patchwork pattern. Single agent. Bounded task. Verifiable
+done state. Use the [Decision Tree](docs/core/guides/decision-tree.md) when
+the work is bigger than this.
+
 ## Core Methodology
 
 Universal pattern docs:
@@ -210,8 +251,6 @@ Cross-cutting practices that apply across all patterns:
   pattern drift signals
 - [Positive Enforcement](docs/core/references/positive-enforcement.md): Prompt
   design principles
-- [Ecosystem Radar](docs/core/references/ecosystem-radar.md): External repos
-  and resource links that are on our radar, not under our control
 - [Stack And Teams We Respect](docs/core/references/stack-and-teams-we-respect.md):
   Observability, telemetry, and LLM engineering projects that map directly to
   how we work
@@ -301,26 +340,6 @@ schedules.
 correction loops, but only when the process underneath stays reviewable. See
 [Behavior Design](docs/core/guides/behavior-design.md).
 
-**How we work at RAGnos.** Fast experiments are welcome. Unreviewable chaos is
-not. If you want the public-safe mad-scientist version of our operating
-posture, read [How We Work At
-RAGnos](docs/core/guides/how-we-work-at-ragnos.md).
-
-## Emerging Topics
-
-Some lanes are intentionally early, but they matter enough to deserve a shelf
-now instead of leaking sideways into the finished docs.
-
-- [AI Philosophy And Implications](docs/core/references/ai-philosophy-and-implications.md):
-  where the bigger questions live when they start changing how teams operate
-- [Discovery Vs Invention](docs/core/references/discovery-vs-invention.md):
-  the argument shelf for what AI is, what it is not, and why that framing leaks
-  into engineering choices
-- [Character Layer](docs/core/guides/character-layer.md): the next layer above
-  behavior design, where interface style starts helping or hurting the work
-
-Call it an orderly mess, or at least an intentional one.
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. This is a
@@ -333,4 +352,5 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ---
 
-Built by [RAGnos Labs](https://github.com/ragnos-labs/merge-2-main).
+By Hunter Canning. Patterns hardened across multiple production agent fleets;
+this repo is the public methodology layer, not internal SOP.

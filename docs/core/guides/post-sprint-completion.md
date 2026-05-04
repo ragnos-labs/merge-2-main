@@ -270,6 +270,9 @@ gh pr create \
   --draft
 ```
 
+The `gh` example assumes GitHub. Substitute the equivalent in your forge of
+choice (`glab` for GitLab, the web UI, or whatever your team uses).
+
 Open as a draft first. Review the rendered description before marking it ready
 for review.
 

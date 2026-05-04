@@ -87,3 +87,74 @@ When editing instruction surfaces:
 4. re-read the full root file after edits
 
 Every extra line in a root instruction file should justify its existence.
+
+---
+
+## Before and After
+
+### Bad: AGENTS.md as a junk drawer
+
+```markdown
+# AGENTS.md
+
+This repo has many agents. Here is everything you need to know.
+
+## Background
+[3 paragraphs of project history]
+
+## Coding rules
+- Use 2-space indent for JS, 4 for Python
+- Run lint before commit
+- Don't commit .env files
+- Make sure to handle errors
+- [29 more bullets]
+
+## Testing
+[4 paragraphs covering each test framework, fixture conventions,
+flaky-test triage, mock policy, snapshot-test rules, integration vs.
+unit boundaries...]
+
+## How to write a PR description
+[2 paragraphs of template]
+
+## How we onboard
+[a section that should be in CONTRIBUTING.md]
+
+## Known issues
+[a section that should be tracked in issues]
+
+[continues for 500 lines]
+```
+
+The reader finishes uncertain about what is rule, what is context, and what
+is folklore. Every agent inherits the same uncertainty.
+
+### Good: AGENTS.md as a bootloader
+
+```markdown
+# AGENTS.md
+
+Documentation-only repo. Multi-agent coordination methodology.
+
+## Bootstrapping rules
+1. Read the README first.
+2. Use `just tool` before opening a PR.
+3. One owner per file. See `docs/core/patterns/overview.md`.
+4. Reject any spawn missing a model pin. See
+   `docs/templates/universal/spawn-guard-hook.md`.
+
+## Where deeper guidance lives
+- Coding standards: `docs/core/guides/`
+- Testing rules: `docs/core/guides/tdd-integration.md`
+- Voice rules: `docs/core/references/instruction-hygiene.md` (this doc)
+- Contributing: `CONTRIBUTING.md`
+
+If a rule is not above and not in a linked doc, it is not a rule.
+```
+
+The reader finishes in under a minute knowing what the repo is, the four
+hard rules, and where to look for everything else. The 500 lines of detail
+still exist; they just live where they belong.
+
+The pattern is the same at every level: the root is a bootloader, the
+linked docs carry the weight.
