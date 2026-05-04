@@ -1,5 +1,9 @@
 # merge-2-main by Mr. CLI
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Docs Hygiene](https://github.com/ragnos-labs/merge-2-main/actions/workflows/docs-hygiene.yml/badge.svg)](https://github.com/ragnos-labs/merge-2-main/actions/workflows/docs-hygiene.yml)
+[![Discussions](https://img.shields.io/github/discussions/ragnos-labs/merge-2-main)](https://github.com/ragnos-labs/merge-2-main/discussions)
+
 **A living field guide for multi-agent coding, review, and release discipline.**
 
 Patterns, guides, references, and templates for orchestrating 2 to 30+ AI

@@ -1,0 +1,52 @@
+title: "[War Story] "
+labels: ["war-story"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share what happened when you ran one of these patterns on real work.
+        Specific is more useful than general; failure modes are as welcome as
+        wins. Keep it short; the value is in the concrete detail, not the
+        narrative arc.
+
+  - type: input
+    id: pattern
+    attributes:
+      label: Pattern
+      description: Which pattern (Patchwork, Worker Swarm, Research Swarm, Hive Mind 2-tier, Hive Mind 3-tier, Worktree Sprint)?
+      placeholder: e.g. Hive Mind 3-tier with 18 agents across 4 workstreams
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime
+      description: Claude Code, Codex, OpenClaw, or other?
+      placeholder: e.g. Claude Code, sonnet-class workers
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What were you trying to do?
+      description: One paragraph of context. What problem, what scope, what constraints.
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What actually happened?
+      description: Walk through the run. Surprises, failures, recoveries, and what the agents did that you didn't expect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: takeaway
+    attributes:
+      label: What would you do differently next time?
+      description: The lesson the next reader should carry into their own run.
+    validations:
+      required: true
