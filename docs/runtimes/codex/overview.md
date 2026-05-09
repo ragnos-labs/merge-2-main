@@ -16,10 +16,12 @@ want explicit sandboxing, structured handoffs, and a strong repo bootstrap via
 - Multi-agent coding runs where sandbox isolation is useful
 - Codex-native orchestration with per-role configuration
 - Programmatic or resumable flows that benefit from an explicit run ledger
+- Large Hive Mind runs that need bounded child-agent waves and worktree
+  isolation
 
 ## Not The Main Fit
 
-- Thread budgets are tighter than the methodology itself
+- Maximum-width swarms with no phase gate or verifier wave
 - Setup matters more because agents start colder than in Claude Code
 - Tool names are different enough that prompts must stay runtime-portable
 
@@ -28,4 +30,5 @@ want explicit sandboxing, structured handoffs, and a strong repo bootstrap via
 - [Setup and AGENTS.md](./setup-and-agents-md.md)
 - [Primitives and Limits](./primitives-and-limits.md)
 - [Pattern Adapters](./pattern-adapters.md)
+- [Hive Mind Orchestration](./hive-mind-orchestration.md)
 - [Programmatic API](./programmatic-api.md)
