@@ -202,6 +202,14 @@ Pick the runtime after you pick the pattern:
 - [OpenClaw Runtime](docs/runtimes/openclaw/overview.md): local-first
   background execution, scheduled workflows, and provider-routing caveats
 
+For a Claude-Code-specific deep dive, see the [Dynamic Workflows + Cost-Control
+Harness](docs/runtimes/claude-code/dynamic-workflows-field-guide.md) field guide.
+In plain speak: Claude Code can now fan out hundreds of agents at once, but by
+default every agent runs on whatever model your session is on, so a big run gets
+expensive fast and quietly. The guide explains the feature and a thin harness
+pattern that makes the cheap model the default and puts the cost levers (agent
+count, model tier, budget cap) in one editable file you can tune per run.
+
 ## Core Guides
 
 Cross-cutting practices that apply across all patterns:

@@ -5,6 +5,36 @@ description: A practitioner field guide to Claude Code's dynamic Workflow featur
 
 # Claude Code Dynamic Workflows + A Cost-Control Harness
 
+## TL;DR (plain speak)
+
+Claude Code can now fire off dozens to hundreds of AI agents at once to chew
+through a big job. The catch: by default every agent runs on whatever model your
+session is on. Fan out 100 agents on the pricey model and you get 100 pricey
+agents, with no built-in "use the cheap model for the grunt work" switch. Costs
+spike fast and quietly.
+
+The harness is a thin governor on top of that feature: a settings file with
+dials, plus a little plumbing to feed them in. It does not rebuild the feature,
+it puts a control layer on it.
+
+How it works, in three steps:
+
+1. One settings file with two dials: how many agents, and which model tier
+   (cheap / mid / top). Set them for the whole run or per stage (cheap agents
+   for the search-and-gather stage, a smarter one only for the final write-up).
+2. A small resolver script bridges a gotcha: the workflow script runs in a
+   sandbox and cannot read files. The resolver reads your settings and hands
+   them to the workflow as plain input, clamps the numbers to safe limits, and
+   refuses the expensive model unless you explicitly flag it.
+3. The workflow then obeys the dials: it tags each agent with the right
+   (cheap-by-default) model, caps how many run at once, and bails out if it is
+   about to blow the token budget.
+
+In one line: it makes the cheap model the default and puts the cost levers
+(agent count, model tier, budget cap) in one editable file, so a big multi-agent
+run is tunable and safe instead of quietly expensive. Turning it up or down for a
+job is a one-line edit, not a code change.
+
 Claude Code's Dynamic Workflows feature (shipped in v2.1.154 as a research preview) lets you
 orchestrate dozens to hundreds of subagents through a JavaScript script that the runtime
 executes in the background, separate from your conversation. Intermediate results live in script
