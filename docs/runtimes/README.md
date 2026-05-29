@@ -36,6 +36,7 @@ Then read in this order:
 - [Overview](./claude-code/overview.md)
 - [Primitives and Limits](./claude-code/primitives-and-limits.md)
 - [Pattern Adapters](./claude-code/pattern-adapters.md)
+- [Dynamic Workflows Field Guide](./claude-code/dynamic-workflows-field-guide.md)
 
 ### Codex
 
