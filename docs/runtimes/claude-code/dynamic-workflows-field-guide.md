@@ -197,6 +197,13 @@ a user burning roughly 425,000 tokens in a single session because four parallel 
 loaded the full parent context. The workflow pattern mitigates the history carryover problem but
 does not eliminate the startup instruction cost.
 
+Live measurement: a real run of approximately 18 simple agents consumed roughly 1.3 million
+tokens total, around 68,000 tokens per agent. That cost comes from per-agent instruction
+context loading plus tool use (several agents reached for web search). At that baseline, a
+100-agent fan-out would be roughly 6.8 million tokens before the session model multiplier
+applies. Haiku-by-default is not just a policy preference at scale; it is the primary cost
+control.
+
 Mitigation: keep agent-facing instruction files lean. Consider a project-scoped lean
 instructions file for workflow-heavy contexts. Prefer cheaper models for fan-out stages where
 the instruction overhead is disproportionate to the work.
@@ -235,6 +242,53 @@ in via `args` from outside the sandbox, or stamp them after the run.
 The script cannot read files, call Node APIs, or execute shell commands. All of that capability
 lives in the agents. The script is pure JavaScript coordination logic plus the primitives listed
 above.
+
+### 7. Workflow args may arrive as a JSON string; parse defensively
+
+The Workflow runtime delivers the `args` input as a JSON string in at least some invocation
+paths. A script that reads `args.myKey` directly gets `undefined` when `args` is a string, and
+JavaScript will silently resolve that against any hardcoded fallback in your script. The script
+appears to succeed while ignoring all caller configuration.
+
+The fix is one defensive parse at the top of every workflow script, before any knob is read:
+
+```js
+const cfg = (typeof args === "string")
+  ? JSON.parse(args)
+  : (args && typeof args === "object" ? args : {});
+```
+
+Then read all configuration through `cfg` rather than directly from `args`. This handles both
+the string form and the object form. The failure mode (silent fallback to defaults) is difficult
+to detect unless you deliberately verify that caller-provided values actually reach the script.
+A smoke test that passes with default values is not a test that the args pipeline works.
+
+### 8. A single awaited schema-required agent can crash the entire run
+
+An unwrapped `await agent({ schema })` throws if the agent ends without returning the required
+structured output; heavy tool-using agents sometimes do this. The error ("subagent completed
+without calling StructuredOutput after N nudges") hard-crashes the entire workflow run rather
+than degrading to a partial result. Agents spawned via `parallel()` are usually null-handled
+(a failed thunk resolves to `null`), but a lone awaited agent is not.
+
+Two fixes together:
+
+First, require structured output explicitly in the agent prompt so the agent knows it must
+produce it: "You MUST call StructuredOutput before finishing."
+
+Second, wrap any lone awaited schema agent in try/catch with a graceful fallback:
+
+```js
+let result;
+try {
+  result = await agent(prompt, { schema: mySchema, model: myModel });
+} catch (e) {
+  log("Agent did not return structured output; using fallback.");
+  result = { summary: "Unavailable.", partial: true };
+}
+```
+
+This ensures a misbehaving agent degrades to a partial report rather than losing the entire run.
 
 ## Use cases worth copying
 
