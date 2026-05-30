@@ -132,6 +132,26 @@ each claim, and returns a cited report with unfalsified claims filtered in. It r
 WebSearch tool to be available. It demonstrates the adversarial cross-checking pattern well: run
 independent verification agents before folding results into a synthesis.
 
+**Route generic web research here first.** If your goal is a fact-checked, multi-source report
+on a question answerable from the public web, `/deep-research` handles the full fan-out,
+cross-check, and synthesis pipeline out of the box. Reserve custom harness workflows for
+internal codebase analysis, tiered model assignment, and governed runs where you need explicit
+budget caps and per-phase model control that the built-in workflow does not expose.
+
+### Keyword trigger and /effort ultracode
+
+Claude Code 2.1.157 added a "Workflow keyword trigger" toggle in `/config`. When enabled, any
+prompt containing the word "workflow" fires a dynamic workflow automatically. If you are writing
+docs, planning, or chatting about workflows without wanting to trigger one, disable the toggle
+via `/config` > "Workflow keyword trigger." In `-p` (headless) mode and Agent SDK mode the
+keyword trigger is never active; those paths never prompt interactively.
+
+`/effort ultracode` sets extra-high reasoning plus automatic workflow orchestration for every
+substantive task in the session. Every major request will spawn workflow(s) unprompted. Reserve
+it for sessions where that behavior is intentional across the board; drop back to `/effort high`
+for routine coding. Note that `"ultracode"` is a Claude Code UI label only: it is NOT a valid
+`effort` API value and must not be passed to scripts or config files as an effort string.
+
 ### Model assignment
 
 Every agent in a workflow uses your session model unless the script routes a stage to a
@@ -275,8 +295,14 @@ Each gotcha above maps to a specific harness control:
 | Token explosion, no hard cap (#1) | Budget ceiling knob plus a `budget.remaining()` guard in the script |
 | Instruction files cost x every agent (#3) | Lean agent prompts; cheap default tier for the fan-out stages |
 | MCP / tool permission stalls (#4) | Pre-allowlist the tools agents need before the run |
-| No pre-run estimate | Resolver prints an estimated token ceiling before launch |
+| No pre-run estimate | Resolver prints model, effort, agent count, budget, and rough token estimate to stderr before launch |
 | Worktree isolation unreliable at concurrency | Isolation defaults off; cap mutating isolated agents until verified |
+
+The harness config also includes an `effort` knob (`low|medium|high|xhigh`, default `high`) and
+per-phase overrides. This is session-level operator guidance: the native `agent()` API has no
+per-agent effort parameter, so the value is surfaced for the operator to set on the launching
+session, not injected into agent calls by the script. The resolver prints the active effort value
+in its pre-run summary so you can confirm the session is configured correctly before launch.
 
 ### Using the harness (the flow)
 
@@ -319,7 +345,10 @@ per-agent cost reduction that does not require changing your script.
 Before any workflow where agents call MCP tools, web search, or non-trivial shell commands,
 verify those tools are in your project `.claude/settings.json` allowlist. Run a short scoped
 test (3 to 5 agents) and confirm no permission stalls before scaling up. Do not leave
-allowlisting as an afterthought on an AFK or scheduled run.
+allowlisting as an afterthought on an AFK or scheduled run. A fast way to cover an entire MCP
+server is the one-line wildcard form: `"mcp__server-name__*"` in `permissions.allow` covers
+every tool exposed by that server without listing each one individually. Use wildcards for
+read-only servers you trust; list individual tools for anything that can write or spend.
 
 **Isolate file-mutating agents; verify isolation before trusting it at concurrency.**
 The `isolation: 'worktree'` agent option exists to give each file-mutating agent its own git
