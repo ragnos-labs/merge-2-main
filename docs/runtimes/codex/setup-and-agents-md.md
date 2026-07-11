@@ -41,11 +41,31 @@ teammates. That makes repo bootstrap quality a first-order concern.
 - Start with 2 to 4 concurrent subagents, not a maximum-width swarm
 - Run read-only exploration before write-capable workers
 - Require concise output formats for every child prompt
+- Close finished child agents promptly so the thread and compute budget returns
+  to the parent run
+- Use worktrees for parallel write-capable workstreams; prompt-only ownership
+  is not enough when agents commit in the same repository
+
+## Subagent design checklist
+
+For any non-trivial Codex sprint, write a short subagent design before spawning:
+
+- what the parent thread keeps
+- which lanes are delegated
+- owned files or search areas per lane
+- first wave size and reserved verifier capacity
+- model or effort target per role
+- handoff format per role
+- merge or review point
+
+If the lanes are not independent, do not spawn yet. Reduce the work to
+Patchwork or run a read-only Research Swarm first.
 
 Templates in this repo:
 
 - `../../templates/codex/codex-config.toml`
 - `../../templates/codex/codex-agents/`
+- `./hive-mind-orchestration.md`
 
 For current product behavior, verify the live runtime docs from
 `../../core/references/ecosystem-source-map.md`.

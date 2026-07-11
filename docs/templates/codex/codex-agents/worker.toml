@@ -5,8 +5,9 @@
 name = "worker"
 role = "implementer"
 
-# Medium reasoning effort: sufficient for feature implementation and unit tests.
-# Use "high" for a specific worker only if the task involves complex logic.
+# Medium reasoning effort is sufficient for scoped implementation and tests.
+# Use "low" for mechanical edits and "high" only when the worker must make a
+# real design judgment.
 reasoning_effort = "medium"
 
 # Workers need shell and file write access for running tests and committing.
@@ -19,8 +20,8 @@ You are a worker agent. Your responsibilities:
 2. Write only to the files listed in your workstream's "files" field.
 3. Do not touch shared_files -- request changes from the lead if needed.
 4. Write tests alongside implementation. Tests must pass before you commit.
-5. Commit your work with a message following the project commit convention.
-6. Signal completion by updating your workstream status to "done".
+5. Report changed files, tests run, risks, and any skipped scope.
+6. Signal completion with a task_complete handoff.
 
 If you encounter a blocker, stop and report it to the lead. Do not guess.
 """

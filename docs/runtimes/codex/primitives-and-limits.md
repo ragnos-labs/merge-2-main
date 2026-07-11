@@ -12,7 +12,7 @@ surfaces.
 
 - `spawn_agent`
 - `send_input`
-- `wait`
+- `wait_agent` or the runtime's equivalent wait primitive
 - `close_agent`
 
 ## Execution Model
@@ -23,13 +23,22 @@ surfaces.
   from the runtime ledger.
 - Durable coordination is emulated through files and handoffs because there is
   no native TeamCreate equivalent.
+- The parent keeps the immediate blocker on its own thread and delegates
+  bounded sidecar tasks that can run while the parent continues useful work.
+- Finished child threads should be closed promptly so idle work does not consume
+  the thread or compute budget.
 
 ## Operational Limits
 
-- Parallelism is capped per session, so larger swarms must run in waves
-- Agents start from isolated filesystem snapshots
-- Treat thread budget and file ownership as hard planning constraints, not soft
-  runtime advice
+- Parallelism is capped per session, but the exact cap depends on the Codex
+  surface, account, and deployment mode. Larger swarms must run in waves.
+- Agents start from isolated task context. Do not assume a child inherits the
+  parent conversation or another child's findings unless you pass that context
+  explicitly.
+- Treat thread budget, compute window, and file ownership as hard planning
+  constraints, not soft runtime advice.
+- Prefer 2 to 4 concurrent child agents by default. Scale wider only when file
+  ownership is disjoint and the parent can still review the outputs.
 - Verify exact primitive names and current runtime limits against the official
   Codex docs before treating them as fixed.
 

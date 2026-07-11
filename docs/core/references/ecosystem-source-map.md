@@ -16,11 +16,14 @@ Use this page for two things:
 
 ### Codex
 
+- [OpenAI Codex docs](https://platform.openai.com/docs/codex)
+- [OpenAI Codex agent internet access](https://platform.openai.com/docs/codex/agent-network)
 - [OpenAI: Introducing Codex](https://openai.com/index/introducing-codex/)
 - What it supports in this repo:
-  - parallel tasks in isolated environments
+  - background tasks in isolated environments
   - AGENTS.md-guided execution
   - traceable terminal logs and test evidence
+  - configurable network access boundaries for cloud tasks
 
 ### Claude Code
 

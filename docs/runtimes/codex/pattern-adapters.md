@@ -9,8 +9,8 @@ Codex is one runtime surface for the same core patterns: Patchwork, Worker
 Swarm, Research Swarm, Hive Mind, and Worktree Sprint as an isolation layer.
 The patterns themselves do not change. What
 changes is the coordination surface: instead of the Claude Code `Agent` tool,
-`TeamCreate`, `SendMessage`, and `run_in_background`, you use Codex-native
-primitives: `spawn_agent`, `send_input`, `wait`, and `close_agent`.
+team messaging, and background task controls, you use Codex-native primitives:
+`spawn_agent`, `send_input`, `wait_agent`, and `close_agent`.
 
 Read `overview.md` first for the runtime summary and `setup-and-agents-md.md`
 for the bootstrap flow. This document covers the pattern-specific adaptations
@@ -33,23 +33,23 @@ differently.
 
 **Codex model:**
 
-- Every agent runs in an isolated sandbox with its own filesystem snapshot.
-- `spawn_agent(role, task)` starts an agent and returns a `thread_id`.
+- Every agent runs as an isolated child task with explicit prompt context.
+- `spawn_agent(role, task)` starts an agent and returns an agent or thread ID.
 - `send_input(thread_id, message)` pushes a message to a running agent.
-- `wait(thread_id)` blocks until the agent produces output.
+- `wait_agent(thread_id)` blocks until the agent produces output.
 - `close_agent(thread_id)` tears down the agent and releases resources.
 - There is no persistent TeamCreate equivalent. Agent identity lives in config
   files (`AGENTS.md` or per-role `.toml` configs) that are loaded at spawn time.
-- Each agent starts from a clean sandbox; shared state must be written to files
-  and committed or passed explicitly through handoff messages.
+- Shared state must be written to files, committed, or passed explicitly through
+  handoff messages.
 
 **Key implications:**
 
 - Agents cannot directly read each other's in-memory state. All coordination
   flows through the orchestrator via structured handoffs.
-- File writes inside a sandbox are local until the agent commits them. The
-  orchestrator sees committed output only.
-- The 6-thread default limit means large topologies must run in waves.
+- Child agents should return distilled findings or bounded patches, not raw
+  transcripts. The parent is responsible for integration.
+- The runtime's thread budget means large topologies must run in waves.
 - `AGENTS.md` at the repo root is the universal configuration entry point.
   Every spawned agent reads it. Role-specific overrides go in per-role `.toml`
   files referenced from the project config.
@@ -123,8 +123,8 @@ declarations alone.
 multi_agent = true
 
 [agents]
-max_threads = <set to your runtime budget>
-max_depth   = 1
+concurrency_budget = <set to your runtime budget>
+max_depth = 1
 job_max_runtime_seconds = <set to your runtime budget>
 ```
 
@@ -133,8 +133,8 @@ select "Multi-agents."
 
 **Thread budget and compute window:**
 
-Codex runtime limits evolve. All spawned agents and the orchestrator count
-against the runtime budget. For large Hive Mind runs, structure your
+Codex runtime limits evolve. Treat any concrete thread count as a deployment
+fact, not a methodology rule. For large Hive Mind runs, structure your
 decomposition so the full run completes within the real budget available to the
 session:
 
@@ -277,7 +277,7 @@ sufficient.
 
 Worker Swarm in Claude Code fans out sub-agents via the Task tool with
 `run_in_background=true`. In Codex, the equivalent is spawning workers with
-`spawn_agent` and collecting results with `wait`.
+`spawn_agent` and collecting results with `wait_agent`.
 
 **Flow:**
 
@@ -376,45 +376,59 @@ implementation work starts. In Codex, explorers run with `sandbox_mode =
 The orchestrator merges all explorer outputs into a single manifest and then
 proceeds to Worker Swarm or Hive Mind decomposition.
 
-### Wave batching with spawn_agents_on_csv
+### Wave batching
 
-`spawn_agents_on_csv` is a Codex-native primitive for launching multiple agents
-in one call using a CSV-formatted task list. It is the direct Codex equivalent
-of fanning out a wave in the Research Swarm model.
+Codex fan-out should be planned as waves rather than as one maximum-width
+spawn. A wave is a bounded set of independent child tasks launched from the
+same manifest and collected before the next dependent phase begins.
 
-**When to use it vs manual sequential spawning:**
+Use manual `spawn_agent` calls when tasks need different roles, sandbox modes,
+or reasoning effort. Use any bulk-dispatch helper your Codex surface provides
+only when every row has the same safety envelope and file ownership is already
+settled.
 
-- Use `spawn_agents_on_csv` when you have 3+ independent tasks ready at the
-  same time and want to start all of them in a single orchestrator turn. This
-  avoids the round-trip overhead of calling `spawn_agent` N times and waiting
-  between each.
-- Use manual `spawn_agent` + `wait` when tasks have heterogeneous configs
-  (different roles, sandbox modes, or reasoning efforts) that cannot be
-  expressed uniformly in a CSV row, or when you need to inspect each result
-  before spawning the next.
+**Wave manifest format:**
 
-**CSV format:**
-
-```
-role,task_json
-explorer,{"type":"explore_request","domain":"auth layer","scope":["src/api/auth/**"]}
-explorer,{"type":"explore_request","domain":"data layer","scope":["src/db/**"]}
-explorer,{"type":"explore_request","domain":"API surface","scope":["src/api/routes/**"]}
+```json
+{
+  "wave_id": "research-1",
+  "budget": {
+    "max_concurrent_children": 4,
+    "reserved_for_parent": 1,
+    "close_children_on_completion": true
+  },
+  "tasks": [
+    {
+      "role": "explorer",
+      "task_id": "scan-auth",
+      "scope": ["src/api/auth/**"],
+      "output": "findings/auth.md"
+    },
+    {
+      "role": "explorer",
+      "task_id": "scan-data",
+      "scope": ["src/db/**"],
+      "output": "findings/data.md"
+    }
+  ]
+}
 ```
 
 **Mapping to Research Swarm waves:**
 
-The Research Swarm model defines two waves: Wave 1 (parallel discovery) and
-Wave 2 (implementation, gated on Wave 1 results). `spawn_agents_on_csv`
-implements Wave 1 exactly: one CSV call launches all explorers in parallel,
-and a single `wait_all` collects all results before the orchestrator builds
-the manifest. Wave 2 (Worker Swarm) then starts from that manifest.
+The Research Swarm model defines discovery waves followed by an implementation
+wave. In Codex, the orchestrator launches only as many child agents as the
+budget allows, waits for their concise outputs, closes completed threads, and
+then launches the next batch if the manifest still has work.
 
 ```
-spawn_agents_on_csv(explorer_csv)   # Wave 1: all explorers start together
-wait_all(wave_1_thread_ids)         # block until all Wave 1 results arrive
+spawn_agent(explorer, task_a)        # Wave 1 batch
+spawn_agent(explorer, task_b)
+wait_agent([task_a, task_b])         # collect bounded findings
+close_agent(task_a)
+close_agent(task_b)
 build_manifest(results)             # orchestrator synthesizes
-spawn_agents_on_csv(worker_csv)     # Wave 2: workers start from manifest
+spawn_agent(worker, task_from_manifest)
 ```
 
 ---
@@ -464,7 +478,7 @@ spawn_agent(role: "lead", task: "<workstream decomposition JSON>")
 
 send_input(thread_id, "<phase_authorized handoff JSON>")
 
-wait(thread_id)
+wait_agent(thread_id)
   -> returns lead's phase_complete or blocked handoff
 
 close_agent(thread_id)
@@ -475,9 +489,9 @@ Leads use the same primitives internally to manage their workers:
 
 ```
 spawn_agent(role: "worker", task: "<task_dispatch JSON>")
-wait(worker_thread_id)
+wait_agent(worker_thread_id)
 spawn_agent(role: "verifier", task: "<verify_request JSON>")
-wait(verifier_thread_id)
+wait_agent(verifier_thread_id)
 send_input(orchestrator_thread, "<phase_complete JSON>")
 ```
 
