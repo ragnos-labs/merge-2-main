@@ -1,54 +1,17 @@
-# Codex Multi-Agent Configuration Template
-# Copy and customize for your project. All fields have documented defaults.
+# Native Codex configuration example, checked against official docs 2026-09-09.
+# Copy selected settings into .codex/config.toml after trusting the project.
+# Preserve the operator's model, approval, sandbox, provider and network policy.
+# This example supplies no overrides for those settings.
+# https://learn.chatgpt.com/docs/agent-configuration/subagents
+# https://learn.chatgpt.com/docs/config-file/config-reference
 
-[codex]
+[agents]
+# This limits open spawned-agent threads, excluding the primary thread.
+# Reserve verifier room within this cap, or run verification in a later wave.
+max_concurrent_threads_per_session = 4
 
-# The model to use for agent tasks.
-# Resolve this tier label to the concrete model available in your Codex
-# environment. Do not hard-code stale model IDs into reusable templates.
-model_tier = "standard"
-
-# Sandbox mode controls whether agents can execute shell commands and write files.
-# Options:
-#   "strict"    -- no network, no shell, read-only filesystem (safest for untrusted code)
-#   "workspace" -- shell + file writes allowed within the working directory only
-#   "off"       -- no restrictions (use only for trusted, reviewed codebases)
-sandbox_mode = "workspace"
-
-# Maximum number of concurrent child agents spawned by the orchestrator.
-# Default to a small wave. Increase only for well-decomposed,
-# file-isolated workstreams with a verifier wave.
-child_agent_wave_limit = 4
-
-# Keep capacity for the parent and verifier roles. A full wave should not
-# consume the entire runtime budget.
-reserved_parent_capacity = 1
-reserved_verifier_capacity = 1
-
-# Default reasoning effort for all agents unless overridden per-agent.
-# Options: "low" | "medium" | "high" | "max"
-# "low"    -- fast, minimal chain-of-thought; good for mechanical tasks
-# "medium" -- balanced; suitable for most feature work
-# "high"   -- slower, deeper reasoning; use for design and cross-system tasks
-# "max"    -- maximum effort; reserve for architecture and security analysis
-reasoning_effort_default = "medium"
-
-# Timeout in seconds before an agent task is considered stalled.
-agent_timeout_seconds = 300
-
-# If true, agents write intermediate reasoning traces to the log directory.
-# Useful for debugging but increases verbosity.
-trace_reasoning = false
-
-# Path to the directory where agent outputs and meta-logs are written.
-# Relative to the project root.
-output_dir = "tmp/codex-run"
-
-[roles]
-
-# Path to per-role agent config files.
-# Each file overrides the defaults above for agents assigned that role.
-lead    = "docs/templates/codex/codex-agents/lead.toml"
-worker  = "docs/templates/codex/codex-agents/worker.toml"
-explorer = "docs/templates/codex/codex-agents/explorer.toml"
-verifier = "docs/templates/codex/codex-agents/verifier.toml"
+# Copy the sibling codex-agents/*.toml templates to .codex/agents/.
+# Current Codex discovers standalone agent files there by their name field.
+# Models and reasoning inherit unless an agent file or explicit request sets them.
+# Wave budgets, output paths, timeouts and phase gates are orchestration
+# conventions. Record them in the task or run ledger, not invented config keys.

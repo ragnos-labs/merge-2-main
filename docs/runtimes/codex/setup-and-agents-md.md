@@ -5,8 +5,8 @@ description: Codex bootstrap rules, AGENTS.md expectations, and per-role config 
 
 # Codex Setup and AGENTS.md
 
-Codex sub-agents start with less inherited session context than Claude Code
-teammates. That makes repo bootstrap quality a first-order concern.
+Codex children have their own task context. Inheritance depends on the client
+and spawn options, so every assignment needs explicit scope and evidence.
 
 ## Required bootstrap
 
@@ -15,7 +15,7 @@ teammates. That makes repo bootstrap quality a first-order concern.
 - Put role-specific overrides in `.toml` files or equivalent config
 - Restate file ownership and acceptance criteria in the task prompt, not only
   in `AGENTS.md`
-- Keep subagents opt-in unless the operator explicitly wants delegation
+- Delegate after a direct request or applicable project or skill instruction
 - Keep the root file stable and small; move depth into nested overrides and
   role configs
 
@@ -41,8 +41,8 @@ teammates. That makes repo bootstrap quality a first-order concern.
 - Start with 2 to 4 concurrent subagents, not a maximum-width swarm
 - Run read-only exploration before write-capable workers
 - Require concise output formats for every child prompt
-- Close finished child agents promptly so the thread and compute budget returns
-  to the parent run
+- Close finished child agents when the active runtime needs their concurrency
+  slots; closing a thread does not refund consumed tokens
 - Use worktrees for parallel write-capable workstreams; prompt-only ownership
   is not enough when agents commit in the same repository
 
@@ -69,3 +69,9 @@ Templates in this repo:
 
 For current product behavior, verify the live runtime docs from
 `../../core/references/ecosystem-source-map.md`.
+
+The templates use native Codex keys checked against the
+[subagent documentation](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+on September 9, 2026. Copy selected settings into `.codex/config.toml` and role
+files into `.codex/agents/`; preserve the operator's existing permission and
+model choices. Wave size, output paths and phase gates are task conventions.

@@ -22,7 +22,7 @@ want explicit sandboxing, structured handoffs, and a strong repo bootstrap via
 ## Not The Main Fit
 
 - Maximum-width swarms with no phase gate or verifier wave
-- Setup matters more because agents start colder than in Claude Code
+- Task assignments omit the working directory, ownership or needed evidence
 - Tool names are different enough that prompts must stay runtime-portable
 
 ## Continue To

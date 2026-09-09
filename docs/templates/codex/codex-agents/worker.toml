@@ -3,17 +3,17 @@
 # Multiple workers can run in parallel provided their files do not overlap.
 
 name = "worker"
-role = "implementer"
+description = "Implement one scoped task and return changes, checks and risks."
 
 # Medium reasoning effort is sufficient for scoped implementation and tests.
 # Use "low" for mechanical edits and "high" only when the worker must make a
 # real design judgment.
-reasoning_effort = "medium"
+model_reasoning_effort = "medium"
 
 # Workers need shell and file write access for running tests and committing.
-sandbox_mode = "workspace"
+# Inherit the parent's permission policy; this file grants no additional access.
 
-description = """
+developer_instructions = """
 You are a worker agent. Your responsibilities:
 
 1. Implement exactly the task assigned to you by the lead.

@@ -8,6 +8,10 @@ description: How to run large Codex multi-agent efforts with a parent orchestrat
 Use this page after choosing Hive Mind or Worker Swarm in the core pattern docs.
 It translates the public methodology into a Codex-shaped execution plan.
 
+Delegate after a direct request or applicable project or skill instruction.
+The topology below is conditional on the active runtime's capacity and allowed
+nesting. Use a flat parent-led wave when nested children are unavailable.
+
 Codex can run many tasks in parallel, but the highest-output design is not
 "spawn the maximum number of children." The reliable design is a parent
 orchestrator that keeps the critical path, dispatches bounded sidecars, and
@@ -141,9 +145,10 @@ The parent should spend reasoning where coordination or judgment lives.
 | Mechanical worker | Low | Applies obvious, low-risk edits |
 | Verifier | Medium to high | Checks correctness and acceptance |
 
-Avoid assigning the strongest model or highest effort to every child. A single
-strong parent plus several scoped lower-cost children is usually better than a
-flat swarm of expensive agents.
+These are methodology suggestions, not measured cost or quality guarantees.
+Preserve configured model and effort inheritance unless the operator or
+applicable instructions select an override. Compare outcome, elapsed time and
+usage before adopting a cheaper role configuration.
 
 Escalate effort when:
 

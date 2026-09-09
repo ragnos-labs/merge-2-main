@@ -17,16 +17,17 @@ surfaces.
 
 ## Execution Model
 
-- The parent session orchestrates multiple isolated agent sandboxes rather than
-  one shared team surface.
+- Children have separate task contexts and inherit the active permission policy.
+  Local children may share a filesystem. Assign worktrees explicitly when Git
+  state must be isolated.
 - Shared state must be written to files, passed in prompts, or reconstructed
   from the runtime ledger.
 - Durable coordination is emulated through files and handoffs because there is
   no native TeamCreate equivalent.
 - The parent keeps the immediate blocker on its own thread and delegates
   bounded sidecar tasks that can run while the parent continues useful work.
-- Finished child threads should be closed promptly so idle work does not consume
-  the thread or compute budget.
+- Close finished child threads when their slots are needed. Closing a thread
+  releases concurrency, not tokens already consumed.
 
 ## Operational Limits
 
@@ -41,6 +42,8 @@ surfaces.
   ownership is disjoint and the parent can still review the outputs.
 - Verify exact primitive names and current runtime limits against the official
   Codex docs before treating them as fixed.
+- Delegate only after a direct request or applicable project or skill
+  instruction. A configuration cap enables capacity, not task authority.
 
 ## Routing Guidance
 

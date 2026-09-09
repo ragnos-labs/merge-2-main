@@ -9,8 +9,9 @@ Codex is one runtime surface for the same core patterns: Patchwork, Worker
 Swarm, Research Swarm, Hive Mind, and Worktree Sprint as an isolation layer.
 The patterns themselves do not change. What
 changes is the coordination surface: instead of the Claude Code `Agent` tool,
-team messaging, and background task controls, you use Codex-native primitives:
-`spawn_agent`, `send_input`, `wait_agent`, and `close_agent`.
+team messaging, and background task controls, you use the primitives exposed by the current Codex client. Names and argument shapes
+can vary; the examples below are orchestration pseudocode, not an SDK.
+Delegation requires a direct request or applicable project or skill instruction.
 
 Read `overview.md` first for the runtime summary and `setup-and-agents-md.md`
 for the bootstrap flow. This document covers the pattern-specific adaptations
@@ -33,7 +34,8 @@ differently.
 
 **Codex model:**
 
-- Every agent runs as an isolated child task with explicit prompt context.
+- Every agent has its own task context. Local agents can share a filesystem;
+  create worktrees explicitly when separate Git state is needed.
 - `spawn_agent(role, task)` starts an agent and returns an agent or thread ID.
 - `send_input(thread_id, message)` pushes a message to a running agent.
 - `wait_agent(thread_id)` blocks until the agent produces output.
@@ -50,9 +52,9 @@ differently.
 - Child agents should return distilled findings or bounded patches, not raw
   transcripts. The parent is responsible for integration.
 - The runtime's thread budget means large topologies must run in waves.
-- `AGENTS.md` at the repo root is the universal configuration entry point.
-  Every spawned agent reads it. Role-specific overrides go in per-role `.toml`
-  files referenced from the project config.
+- Applicable project instructions and custom agent configuration supply
+  persistent guidance. Restate the exact task, files and acceptance conditions
+  in the dispatch; verify the working directory and active instruction scope.
 
 ---
 
@@ -62,21 +64,13 @@ differently.
 context into every Codex agent. Think of it as the bootstrap configuration that
 travels with each spawn.
 
-**CLI vs IDE loading behavior:**
+**Instruction and context loading:**
 
-- **Codex CLI** auto-loads `AGENTS.md` at session start. Every spawned sub-agent
-  receives its contents automatically. No manual injection needed.
-- **Codex IDE** does NOT auto-load `AGENTS.md`. IDE users must manually paste
-  the XML context block into the conversation before spawning agents. If you
-  skip this step, sub-agents start with no project context.
-
-**What sub-agents receive at spawn time:**
-
-Sub-agents receive exactly two things: (a) the contents of `AGENTS.md` and
-(b) the task prompt you pass to `spawn_agent`. They do NOT inherit the
-orchestrator's conversation history, its reasoning state, or any
-`send_input` messages sent to other agents. Every sub-agent starts blank
-except for `AGENTS.md` and its own task prompt.
+Local Codex clients discover applicable project instructions. Verify the client,
+working directory and instruction chain; do not assume IDE users always need to
+paste the root file manually. A child may receive inherited or forked context,
+depending on the exposed spawn options. It does not automatically receive every
+sibling's findings. Supply a self-contained assignment and pass needed evidence.
 
 **What to put in AGENTS.md:**
 
@@ -115,45 +109,31 @@ declarations alone.
 
 ---
 
-## Enabling Multi-Agent Mode
+## Native configuration and wave planning
+
+Current local releases enable subagents by default. A direct user request or
+applicable project or skill instruction admits delegation. Configuration enables
+the capability; it does not authorize an unrelated task.
 
 ```toml
-# ~/.codex/config.toml  (or  .codex/config.toml  per project)
-[features]
-multi_agent = true
-
+# Selected native setting for .codex/config.toml in a trusted project.
 [agents]
-concurrency_budget = <set to your runtime budget>
-max_depth = 1
-job_max_runtime_seconds = <set to your runtime budget>
+max_concurrent_threads_per_session = 4
 ```
 
-Or toggle it interactively: type `/experimental` inside a Codex session and
-select "Multi-agents."
+The cap excludes the primary thread. Leave room within the child cap for a
+verifier, or close the implementation wave before starting verification.
+`max_threads` remains a legacy alias. Omit the cap to use the client's default.
 
-**Thread budget and compute window:**
+Wave sizes, phase numbers, output paths and stall deadlines belong in the task
+or run ledger. They are methodology conventions, not additional native TOML
+settings. Nested leads are conditional on the runtime's available depth and
+capacity. When nesting is unavailable, the parent dispatches workers directly.
 
-Codex runtime limits evolve. Treat any concrete thread count as a deployment
-fact, not a methodology rule. For large Hive Mind runs, structure your
-decomposition so the full run completes within the real budget available to the
-session:
-
-- Limit each phase to a conservative number of concurrent leads, leaving
-  headroom for the orchestrator and any verifier threads.
-- Close completed threads promptly: lingering idle threads consume both the
-  thread budget and the compute window.
-- For runs that approach the runtime limit, write checkpoint context to
-  `checkpoints.json` at each phase gate so the run can be resumed in a new
-  session if needed.
-
-If a run must span multiple sessions, treat the checkpoint file as the
-hand-off artifact and re-spawn the orchestrator with it at the start of the
-next session.
-
-If the exact limits or configuration fields in this section differ from the
-runtime you are using, prefer the official Codex docs and keep the methodology
-rule: design to the real thread and compute budget you have, not the one you
-wish you had.
+See the [official subagent configuration](https://learn.chatgpt.com/docs/agent-configuration/subagents)
+and [configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference),
+checked September 9, 2026. Preserve existing model and permission choices when
+adapting the [configuration template](../../templates/codex/codex-config.toml).
 
 ---
 
@@ -162,12 +142,10 @@ wish you had.
 Run these checks before spawning any agents. Catching misconfigurations here
 prevents wasted compute budget on agents that start with wrong context.
 
-1. **Verify `AGENTS.md` at repo root.** Confirm the file exists and contains
-   current project context. If you are using the Codex IDE (not CLI), copy the
-   full `AGENTS.md` content into an XML block and paste it into the session
-   before proceeding.
+1. **Verify applicable instructions.** Confirm the working directory and
+   current project context before dispatch. Restate child ownership and proof.
 
-2. **Check thread budget.** Review `max_threads` in `.codex/config.toml`.
+2. **Check thread budget.** Review the current child cap and active threads.
    Count how many agents your first wave needs. If the wave exceeds the thread
    limit, plan the stagger before spawning.
 
@@ -178,61 +156,33 @@ prevents wasted compute budget on agents that start with wrong context.
 
 4. **Set role via `.codex/agents/<role>.toml`.** Confirm the role config files
    exist for every role you will spawn (lead, worker, explorer, verifier). If
-   a role file is missing, the agent falls back to default settings, which may
-   use wrong reasoning effort or sandbox mode for the task.
+   a custom role cannot load, resolve the error before assigning it. Do not
+   assume a particular fallback or broaden permissions.
 
-5. **Initialize the run ledger.** Create `.codex/runtime/run.json` and
-   `workstreams.json` before spawning. An absent ledger means no recovery path
-   if the orchestrator session is interrupted mid-run.
+5. **Choose recovery evidence.** Reuse the owning task ledger and durable
+   source state. For a multi-phase run without an existing owner, the example
+   files below provide a portable checkpoint. Avoid creating a second ledger.
 
 ---
 
 ## Role Definitions
 
-Four roles map onto the same responsibilities used in Claude Code patterns.
-Define them in per-role config files and reference them from the project config.
+Use the [standalone role templates](../../templates/codex/codex-agents/lead.toml)
+for leads, workers, explorers and verifiers. Copy selected files into
+`.codex/agents/`. Each has `name`, a short `description`, and
+`developer_instructions`; optional `model_reasoning_effort` selects effort.
+Omitting `model` retains the configured or inherited model selection.
 
-```toml
-# .codex/agents/lead.toml
-model_reasoning_effort   = "high"
-sandbox_mode             = "full"
-developer_instructions   = """
-You are a workstream lead. You own a defined set of files and a feature goal.
-Decompose your goal into 2-5 worker tasks. Spawn workers for implementation.
-Spawn a verifier before reporting phase completion. You may create child tasks
-within your file ownership and phase. You may NOT edit files outside your
-ownership set or advance to the next phase without verifier confirmation.
-Report to the orchestrator via send_input when your phase is complete.
-"""
+Leads and workers inherit permissions. Explorer and verifier templates request
+`read-only` and instruct the agent to return findings to the parent. Parent
+runtime overrides and managed policy still apply; a role file is not a stronger
+isolation boundary than the active runtime. Never assume tests are read-only:
+commands that write fixtures, caches or reports need a suitable admitted harness.
+The parent owns persistence of returned review reports.
 
-# .codex/agents/worker.toml
-model_reasoning_effort   = "medium"
-sandbox_mode             = "full"
-developer_instructions   = """
-You are an implementation worker. You receive a bounded task with specific
-files, acceptance criteria, and a test command. Implement the change. Run the
-test command. Report success or failure. Do not expand scope.
-"""
-
-# .codex/agents/explorer.toml
-model_reasoning_effort   = "low"
-sandbox_mode             = "read-only"
-developer_instructions   = """
-You are a read-only explorer. Search, read, and analyze code. Return structured
-findings: file paths, function signatures, dependency chains, risk areas.
-Never edit files. Never run destructive commands.
-"""
-
-# .codex/agents/verifier.toml
-model_reasoning_effort   = "medium"
-sandbox_mode             = "read-only"
-developer_instructions   = """
-You are a verifier. Run the provided test command. Check outputs against
-acceptance criteria. Return a structured verdict:
-{ "pass": bool, "evidence": [...], "gaps": [...] }
-Never edit files. If tests fail, report exactly what failed and why.
-"""
-```
+Use one mutation owner per worktree and one owner for final integration. A lead
+can perform its own bounded work when child delegation is unavailable. A role
+name alone grants no merge, deployment or external-action authority.
 
 ---
 
@@ -286,7 +236,7 @@ Worker Swarm in Claude Code fans out sub-agents via the Task tool with
    command.
 2. Spawn one worker per independent task. Tasks with no shared files can run
    concurrently (up to the thread limit).
-3. Call `wait` on each worker thread. Collect the `task_complete` handoff.
+3. Use the available wait primitive and collect each `task_complete` handoff.
 4. If a worker fails, either retry with a revised task or escalate to the lead.
 5. After all workers complete, spawn a verifier to confirm the aggregate result.
 
@@ -325,12 +275,12 @@ threads close.
 ## Research Swarm
 
 Research Swarm uses read-only explorers to scan the codebase before any
-implementation work starts. In Codex, explorers run with `sandbox_mode =
-"read-only"` so they cannot accidentally modify files.
+implementation work starts. The explorer template requests `read-only`; verify
+the active permission policy and preserve read-only task scope.
 
 **Flow:**
 
-1. Spawn 2-8 explorers in parallel, each scoped to a discovery domain (e.g.,
+1. Start a bounded wave of explorers, each scoped to a discovery domain (e.g.,
    one per module, one per concern: auth, data layer, API surface).
 2. Give each explorer a structured output requirement so results are mergeable.
 3. Wait for all explorers to complete.
@@ -466,9 +416,11 @@ Orchestrator (root session, reasoning: high)
 When the session thread budget is tight, stagger larger 3-tier runs: close
 completed Phase 1 leads before spawning the next wave.
 
-**The orchestrator never implements.** It decomposes, dispatches, gates phase
-transitions, and synthesizes. Leads own workstreams. Workers own tasks.
-Verifiers own acceptance.
+**The parent owns the critical path.** It decomposes, integrates and performs
+useful local work while independent lanes run. Leads own workstreams; workers
+own bounded tasks. Verifiers supply evidence; the applicable owner decides
+acceptance. The topology diagrams show roles over a run, not guaranteed
+concurrent capacity or permission for nested spawning.
 
 **Coordination via Codex primitives:**
 
@@ -579,9 +531,9 @@ scope creep:
 
 ## The Run Ledger
 
-Codex sandboxes are ephemeral. There is no built-in persistent agent state
-across sessions. The run ledger is a set of flat files that serves as the
-durability layer.
+Local Codex threads can be resumed through supported clients or SDKs. A portable
+run ledger complements thread history with explicit work ownership, source
+revisions and proof. Reuse an existing owning ledger when one is available.
 
 **Location:** `.codex/runtime/` in the project root (or
 `.ai/sprints/<slug>/codex-runtime/` for sprint-scoped runs).
@@ -628,8 +580,8 @@ If the orchestrator session dies mid-run:
 4. If threads are gone: re-spawn leads with checkpoint context from
    `checkpoints.json` and skip phases already marked complete.
 
-The run ledger is the only recovery path. Write to it after every phase gate,
-not just at the end.
+Update the chosen ledger at phase gates. Verify source and evidence before
+resuming an effect; a recorded status alone does not prove that effect completed.
 
 ---
 
@@ -726,7 +678,7 @@ agent to report a tool-not-found error or silently ignore the instruction.
 <hive_mind_orchestrator>
 You are a Hive Mind orchestrator. Your job is to decompose a solution design
 into owned workstreams, spawn lead agents, gate phase transitions, and
-synthesize the final result. You do NOT implement code.
+synthesize the final result. Keep the critical path and useful local work.
 
 <solution_design>
 PASTE_SOLUTION_DESIGN_HERE
@@ -757,7 +709,8 @@ PASTE_SOLUTION_DESIGN_HERE
 
 <constraints>
 - if thread budget is tight: stagger waves if needed.
-- max_depth = 1: leads spawn workers; workers do not spawn sub-workers.
+- Use nested leads only when the live runtime permits them; otherwise flatten
+  the wave under the parent. Workers do not expand delegation on their own.
 - All file writes must be committed before reporting phase_complete.
 - Never commit to the main branch. Use a feature branch.
 - Append every phase gate event to events.jsonl.
@@ -859,67 +812,41 @@ If pass is false, list exactly what failed and why in "gaps."
 
 ---
 
-## Responses API (Programmatic Callers)
+## Programmatic callers
 
-If you drive Codex agents programmatically via the Responses API rather than
-the CLI or IDE, three fields matter for multi-agent runs.
+The [Codex SDK](https://developers.openai.com/codex/sdk/) starts, continues and
+resumes local Codex threads. Retain thread IDs and use the SDK's supported
+continuation or resume methods. The [app server](https://learn.chatgpt.com/docs/app-server)
+supplies client-facing history, approval and event interfaces.
 
-**`phase` field:**
-
-Pass `phase` in the request body to indicate which phase of a Hive Mind run
-the call belongs to. The Responses API does not enforce phase gates on its
-own; you must track phase state in your run ledger and pass the correct `phase`
-value so downstream agents know their context. Mismatch between the ledger
-phase and the request `phase` is a common source of duplicate or out-of-order
-work.
-
-**`previous_response_id` for conversation continuity:**
-
-Codex agents spawned via the Responses API are stateless by default. To
-maintain conversation continuity within a durable lead agent, pass
-`previous_response_id` set to the `id` from the prior response. This chains
-the turns together so the agent retains its prior reasoning. Omitting this
-field restarts the agent from a blank context, equivalent to re-spawning with
-no checkpoint.
-
-**Context compaction:**
-
-Long-running leads accumulate large contexts. The Responses API does not
-automatically compact. For leads that span many worker cycles, periodically
-summarize the conversation state into a structured checkpoint (using the
-`checkpoints.json` format), close the lead, and re-spawn with the checkpoint
-as the opening context rather than the full prior conversation. This keeps
-token costs predictable and avoids context-window truncation on extended runs.
+A direct Responses API application is a different integration. Do not treat its
+response IDs as native Codex agent-thread IDs or invent a top-level request
+`phase` field for this methodology. Keep workflow phase and acceptance in the
+application's own ledger and pass needed task context through documented API
+inputs. Follow the selected API's current continuity and compaction contract;
+this repository does not supply that integration or a compaction policy.
 
 ---
 
 ## When Not To Force This Runtime
 
-**Sandboxes are ephemeral.** Each agent starts from a fresh filesystem snapshot.
-Work must be committed to the repo before the agent closes. Uncommitted
-in-memory state is lost when the sandbox exits.
+**Filesystem ownership must be explicit.** Local children may share a checkout.
+The sandbox is a permission boundary, not an automatic private filesystem
+snapshot. Worktrees isolate Git state, not credentials or external authority.
+Preserve dirty work and exact revisions before closing or removing any lane.
 
-**No persistent TeamCreate equivalent.** There is no built-in way to register a
-named agent that persists across Codex sessions. Long-running leads must be
-re-spawned with checkpoint context if the orchestrator session is interrupted.
-The run ledger is the mitigation, not a full replacement.
+**Capacity and nesting vary.** Design to the limits exposed in the active
+session. Run waves or flatten the topology when a child cannot spawn. Closing a
+thread can release concurrency; it does not refund tokens already spent.
 
-**Thread limit bounds parallelism.** Large topologies must run in waves when
-the runtime thread budget is small. Design your decomposition with the actual
-thread budget in mind: close completed threads before spawning the next wave.
+**Context needs a handoff.** Resume supported threads when appropriate; provide
+self-contained task and evidence references when starting fresh ones. Do not
+assume either universal full-history inheritance or universally blank children.
 
-**max_depth = 1.** Workers cannot spawn sub-workers. If a task is too large
-for a single worker, the lead must break it further before dispatching. There is
-no 3-tier fan-out at the worker level.
-
-**Context windows are independent.** Each spawned agent starts with a clean
-context. It knows only what you give it at spawn time plus what is in
-`AGENTS.md`. Leads accumulate context within a session but lose it if
-re-spawned. Pass explicit checkpoint context when re-spawning after interruption.
-
-**Commits are the synchronization mechanism.** Two workers editing the same
-file in separate sandboxes will conflict at merge time. The no-file-overlap rule
-exists for this reason. Enforce it in the decomposition step, not after the fact.
+**The parent must benefit from delegation.** If it has no independent useful
+work or cannot review the outputs, keep the task local. Preserve configured
+model and effort defaults unless the user or applicable instructions select a
+different role configuration.
 
 ---
 

@@ -128,10 +128,10 @@ larger topologies, run in waves: close completed threads before spawning the
 next batch. A config template lives at `docs/templates/codex/codex-config.toml`.
 
 **3. CLI vs IDE context loading.**
-Codex CLI reads `AGENTS.md` automatically at session start. Codex IDE (web)
-does not auto-load it; paste the relevant section as an XML block into your
-session prompt. Role config files in `docs/templates/codex/codex-agents/` are
-formatted for direct paste into IDE sessions.
+Local Codex clients discover applicable project instructions. Verify the client,
+working directory and active instruction chain before dispatch. Copy selected
+standalone role templates from `docs/templates/codex/codex-agents/` into
+`.codex/agents/`; do not treat the TOML files as pasted conversation prompts.
 
 **4. Pattern selection.**
 Start with `docs/core/guides/decision-tree.md`. After you pick a pattern,
