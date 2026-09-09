@@ -44,6 +44,7 @@ Then read in this order:
 - [Setup and AGENTS.md](./codex/setup-and-agents-md.md)
 - [Primitives and Limits](./codex/primitives-and-limits.md)
 - [Pattern Adapters](./codex/pattern-adapters.md)
+- [Hive Mind Orchestration](./codex/hive-mind-orchestration.md)
 - [Programmatic API](./codex/programmatic-api.md)
 
 ### OpenClaw

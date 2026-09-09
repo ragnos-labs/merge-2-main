@@ -19,5 +19,6 @@ Key rule:
 - The methodology's phase gates and handoff contracts still live above the API.
   The API does not enforce them for you.
 
-For the detailed field-level guidance, see the `Responses API` section in
-`pattern-adapters.md`.
+For the distinction between native Codex threads and direct API applications,
+see the `Programmatic callers` section in `pattern-adapters.md` and the
+[official Codex SDK guide](https://developers.openai.com/codex/sdk/).

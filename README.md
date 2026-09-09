@@ -199,6 +199,8 @@ Pick the runtime after you pick the pattern:
   sessions, native background agents, team-style coordination
 - [Codex Runtime](docs/runtimes/codex/overview.md): sandboxed agent threads,
   `AGENTS.md`, per-role configs, programmatic orchestration
+- [Codex Hive Mind Orchestration](docs/runtimes/codex/hive-mind-orchestration.md):
+  bounded child-agent waves, worktree isolation, and cost-aware role defaults
 - [OpenClaw Runtime](docs/runtimes/openclaw/overview.md): local-first
   background execution, scheduled workflows, and provider-routing caveats
 
