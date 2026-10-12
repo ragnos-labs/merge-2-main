@@ -59,16 +59,16 @@ methodology. Both feed back into future doc updates.
 
 ## Local Validation
 
-This repo ships a minimal local gate so contributors can match CI before they
-open a PR.
+Install the locked tools with `npm ci`, then validate the completed change
+locally before opening a PR.
 
 - `just tool`: runs the full docs hygiene pass
 - `just lint-md`: checks markdown against the repo's lint profile
 - `just check-links`: verifies relative markdown links resolve
 - `just check-ascii`: catches non-ASCII drift
 
-GitHub runs the same `just tool` gate in the `docs-hygiene` workflow. That is
-the status check to require on `main`.
+Run the full pass once per completed change. GitHub Actions are a last resort;
+this repository has no required hosted docs check.
 
 ## Voice Boundaries
 
