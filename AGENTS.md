@@ -55,7 +55,7 @@ Agents working on this repo must follow these rules on every task.
    for notification system`. Never use any other scope prefix.
 
 4. **Never commit directly to main.** Always branch and open a pull request.
-   Branch naming: `docs/<short-slug>`.
+   Branch naming: `docs/<short-slug>` or `codex/<short-slug>`.
 
 5. **One agent per document.** If two agents are running in parallel, they
    must not edit the same file. Claim a file before writing to it. Resolve
@@ -65,8 +65,9 @@ Agents working on this repo must follow these rules on every task.
    project files may carry a light dry edge. Every doc under `docs/` stays
    plain, technical, and low-sass.
 
-7. **Run the repo gate before handoff.** Use `just tool` before opening or
-   updating a PR. The matching GitHub check is `docs-hygiene`.
+7. **Validate the completed change locally.** Run `just tool` once before
+   opening or updating a PR. GitHub Actions are a last resort; there is no
+   required hosted docs check.
 
 ---
 
@@ -91,15 +92,9 @@ One owner per file per phase. No exceptions.
 </file_ownership>
 
 <verification_loop>
-After every edit to a document:
-
-1. Re-read the full file.
-2. Verify your change appears exactly as intended.
-3. Verify you did not accidentally remove or corrupt adjacent content.
-4. Run `just tool`.
-5. Only then stage and commit.
-
-Do not commit immediately after writing. The re-read step is mandatory.
+After completing the related edits, review the diff for intended changes and
+adjacent content, then run `just tool` once before staging and committing.
+Repeat checks only after further edits or a failure.
 </verification_loop>
 
 <voice_boundary>
